@@ -4,7 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mail, Phone, MapPin, Send, Loader2, CheckCircle2, Clock } from "lucide-react";
 import type { SiteSettings } from "@/lib/types";
-import { SectionHeading } from "./section-heading";
+import { SectionHeading, Accent } from "./section-heading";
 import { Reveal, StaggerGroup, StaggerItem } from "./reveal";
 import { useToast } from "@/hooks/use-toast";
 
@@ -52,8 +52,13 @@ export function Contact({ settings }: { settings: SiteSettings }) {
 
       <SectionHeading
         eyebrow="Say Hello"
-        title="Let's Work Together"
+        title={
+          <>
+            Let&apos;s Work <Accent>Together</Accent>
+          </>
+        }
         description="Have a project in mind? Drop a message — it lands straight in my admin inbox."
+        index={8}
       />
 
       <div className="mt-16 grid gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-14">

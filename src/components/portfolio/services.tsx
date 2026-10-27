@@ -2,7 +2,7 @@
 
 import type { Service } from "@/lib/types";
 import { DynIcon } from "@/components/icon";
-import { SectionHeading } from "./section-heading";
+import { SectionHeading, Accent } from "./section-heading";
 import { StaggerGroup, StaggerItem } from "./reveal";
 
 export function Services({ services }: { services: Service[] }) {
@@ -10,8 +10,13 @@ export function Services({ services }: { services: Service[] }) {
     <section id="services" className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
       <SectionHeading
         eyebrow="What I Offer"
-        title="Services Crafted For You"
-        description="Move your cursor across the cards — the light follows you. That's the level of polish I bring to every project."
+        title={
+          <>
+            Services Crafted <Accent>For You</Accent>
+          </>
+        }
+        description="Move your cursor across the cards — the light follows you and the frame ignites. That's the level of polish I bring to every project."
+        index={6}
       />
 
       <StaggerGroup className="mt-16 grid gap-6 sm:grid-cols-2 xl:grid-cols-4" stagger={0.11}>
@@ -25,7 +30,7 @@ export function Services({ services }: { services: Service[] }) {
                 el.style.setProperty("--my", `${e.clientY - rect.top}px`);
               }}
               data-cursor
-              className="glass spotlight-card group relative flex h-full flex-col overflow-hidden rounded-3xl p-7 transition-all duration-400 hover:-translate-y-2 hover:border-[var(--site-primary)]/45 hover:shadow-[0_22px_60px_-22px_rgba(139,92,246,0.55)]"
+              className="conic-hover glass spotlight-card group relative flex h-full flex-col overflow-hidden rounded-3xl p-7 transition-all duration-400 hover:-translate-y-2 hover:shadow-[0_22px_60px_-22px_rgba(139,92,246,0.55)]"
             >
               {/* index number */}
               <span className="absolute right-5 top-4 font-display text-5xl font-black text-white/[0.05] transition-all duration-500 group-hover:text-white/[0.09]">

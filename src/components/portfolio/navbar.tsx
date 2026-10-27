@@ -95,14 +95,21 @@ export function Navbar({
               <li key={id}>
                 <a
                   href={`#${id}`}
-                  className={`group relative rounded-lg px-3.5 py-2 text-sm font-medium transition-colors duration-200 ${
+                  className={`relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-200 ${
                     active === id ? "text-white" : "text-white/55 hover:text-white"
                   }`}
                 >
-                  {label}
+                  {active === id && (
+                    <motion.span
+                      layoutId="nav-active-pill"
+                      transition={{ type: "spring", stiffness: 340, damping: 30 }}
+                      className="absolute inset-0 rounded-full border border-white/10 bg-white/[0.07] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+                    />
+                  )}
+                  <span className="relative z-10">{label}</span>
                   <span
                     className={`absolute inset-x-3 -bottom-0.5 h-[2px] rounded-full bg-gradient-to-r from-[var(--site-primary)] to-[var(--site-accent)] transition-all duration-300 ${
-                      active === id ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0 group-hover:scale-x-100 group-hover:opacity-60"
+                      active === id ? "opacity-0" : "scale-x-0 opacity-0 group-hover:scale-x-100 group-hover:opacity-60"
                     }`}
                   />
                 </a>

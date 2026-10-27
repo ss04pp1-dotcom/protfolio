@@ -74,3 +74,45 @@ Stage Summary:
 - Everything from Task 1 preserved: full animation suite + complete admin CMS, now D1-backed in production with instant saves
 - One-time user setup required (DEPLOY.md): GitHub repo + 2 secrets (CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID) → first deploy auto-creates D1 (portfolio-db), schema, seed (demo content + admin/admin123), Pages project mdsalahuddin
 - Local dev: bun install; bun run db:setup; bun run dev (Next 16.4.3, Node ≥22.5)
+
+---
+Task ID: 3
+Agent: Main Agent (Z.ai)
+Task: Premium design upgrade — user request (Banglish): "aro valo kore dekho ki ki kora jay ki korle aro valo desing hobe portfolio ta aro premium hobe"
+
+Work Log:
+- Reviewed entire existing codebase (all 20+ portfolio components, admin panel, CSS, workflows)
+- FALSE ALARM fixed: deploy.yml "branches: ain]" looked corrupted via cat — hex-dump proved file is correct ([main]); sandbox output filter strips [m as ANSI code
+- Design system: added Playfair Display serif (italic accents) via next/font; globals.css additions — cinematic film-grain noise overlay (body::after, animated), .conic-hover rotating conic border, .text-outline/.text-outline-strong hollow text, aurora keyframes (drift/alt/hue), .ghost-number outlined numerals, html{position:relative} (fixes framer-motion non-static container warning — verified 0 warnings after fix), extended prefers-reduced-motion list
+- NEW components: VelocityMarquee (scroll-velocity reactive infinite strip — speed+direction+skew respond to scroll, alternating solid/outline items) & WordReveal (awwwards-style word-by-word scroll-linked paragraph reveal, supports **bold**)
+- SectionHeading: title accepts ReactNode + string `*asterisk*` accent-marker parsing (admin-controllable serif-italic gradient words) + giant ghost section numbers (01–08) sliding in
+- Hero: layered aurora background (drifting + hue-rotating orbs + horizon beam), per-letter hover springs (y:-16 scale:1.14 rotateX)
+- NEW Bento "Highlights" section (after About): featured project tile w/ conic hover + image zoom, oversized hero stat w/ CountUp + rotating dashed ring, Tech Orbit card (8 top skills orbiting MS monogram, counter-spun upright chips), mini stat tiles, magnetic CTA banner w/ shimmer — all powered by existing admin-editable data (stats/skills/projects/settings), auto-hides if empty
+- About: WordReveal paragraphs + VelocityMarquee strip (bigger display font) + ghost number
+- Skills: SVG circular level rings (gradient stroke, animated dashoffset) around icons + glowing shimmer tip on bars
+- Projects: parallax covers (scroll-driven y ±7% via useScroll per card), spotlight glow, data-cursor-label="View" morphs custom cursor into labelled pill
+- Journey: scroll-linked timeline spine (useScroll target + spring scaleY) + travelling glow head riding the line
+- Services: rotating conic gradient border on hover (conic-hover)
+- Testimonials: 3D Tilt cards
+- Footer: giant OUTLINED name with gradient hover-fill (clip-path wipe), live local-time clock chip (Asia/Dhaka, ticking), BackToTop with circular scroll-progress ring
+- Navbar: layoutId active-pill sliding between nav links
+- CustomCursor: full rewrite — label pill mode via [data-cursor-label], spring ring, hide-dot when labelled
+- Admin: 5 one-click premium Theme Presets (Royal Violet/Sunset Gold/Emerald Luxe/Rose Noir/Amber Flame) with active-check + About title hint documents *accent* syntax
+- PERSONALIZED everything to real owner: DB + sql/seed.sql updated Arif Rahman→MD Salahuddin (settings, testimonials), email→hello@mdsalahuddin.dev, aboutTitle now uses *magic* accent marker, favicon "A"→"MS"
+- Cleaned test contact message from DB
+
+Verification (Agent Browser + VLM E2E):
+- Lint: clean (exit 0)
+- Fresh reload: ZERO console errors, ZERO warnings (html position fix verified)
+- VLM-verified screenshots: hero (name/badges/buttons/stats perfect), about (01 ghost number, *magic* italic gradient, marquee), bento (featured/stat/orbit/CTA all correct), skills (rings confirmed), projects, journey (line+nodes), footer (outlined name + clock chip)
+- Admin E2E: login → Settings → Theme → 5 presets visible, Royal Violet active ✓ → clicked Sunset Gold → Save & Go Live → live CSS vars changed to #f59e0b/#ef4444 instantly (VLM confirmed amber tones) → reverted to Royal Violet → verified #8b5cf6
+- Project card: data-cursor-label="View" present; click → modal with Live Demo/Source Code ✓
+- Contact form: filled → Send → "Message Sent!" + toast ✓
+- VelocityMarquee actively translating (transform sampled changing); footer clock ticking "Dhaka, Bangladesh · 1:08 PM"
+- Mobile 390px: no horizontal overflow (bento stacks perfectly, VLM-verified)
+
+Stage Summary:
+- Portfolio upgraded from "animated" to "editorial premium": serif italic accents, film grain, aurora, ghost numerals, velocity marquee, word-reveal, bento grid, parallax covers, scroll-linked timeline, orbit visualization, outlined hover-fill footer, labelled custom cursor, progress-ring back-to-top
+- Admin control extended: 5 theme presets + *accent* title syntax (all existing CRUD untouched)
+- Content fully personalized to MD Salahuddin (DB + Cloudflare seed)
+- Deploy pipeline (Task 2) untouched and intact

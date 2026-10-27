@@ -4,6 +4,7 @@ import type { SiteData } from "@/lib/types";
 import { Navbar } from "./navbar";
 import { Hero } from "./hero";
 import { About } from "./about";
+import { Bento } from "./bento";
 import { Skills } from "./skills";
 import { Projects } from "./projects";
 import { Journey } from "./journey";
@@ -40,6 +41,7 @@ export function PortfolioSite({
           stats={data.stats}
         />
         <About settings={settings} marqueeItems={marqueeItems} />
+        <Bento settings={settings} stats={data.stats} skills={data.skills} projects={data.projects} />
         <Skills skills={data.skills} />
         <Projects projects={data.projects} />
         <Journey experiences={data.experiences} education={data.education} />

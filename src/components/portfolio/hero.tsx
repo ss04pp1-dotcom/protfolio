@@ -69,16 +69,21 @@ export function Hero({
       onMouseMove={onMouseMove}
       className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 pb-16 pt-24 sm:px-6"
     >
-      {/* parallax gradient orbs */}
+      {/* layered aurora — drifting mesh gradients + mouse parallax */}
       <motion.div
         aria-hidden
         style={{ x: orbX, y: orbY }}
-        className="animate-blob pointer-events-none absolute -left-24 top-1/4 h-80 w-80 bg-[var(--site-primary)] opacity-[0.16] blur-[110px]"
+        className="animate-aurora animate-hue-drift pointer-events-none absolute -left-32 top-1/4 h-[26rem] w-[26rem] bg-[var(--site-primary)] opacity-[0.2] blur-[100px]"
       />
       <motion.div
         aria-hidden
         style={{ x: orbX2, y: orbY2 }}
-        className="animate-blob pointer-events-none absolute -right-24 bottom-1/4 h-96 w-96 bg-[var(--site-accent)] opacity-[0.13] blur-[120px] [animation-delay:-6s]"
+        className="animate-aurora-alt pointer-events-none absolute -right-32 bottom-1/5 h-[30rem] w-[30rem] bg-[var(--site-accent)] opacity-[0.16] blur-[110px] [animation-delay:-8s]"
+      />
+      {/* horizon beam — wide soft glow anchored at the hero baseline */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-[radial-gradient(60%_100%_at_50%_100%,color-mix(in_srgb,var(--site-primary)_16%,transparent),transparent_70%)]"
       />
       <div aria-hidden className="bg-grid mask-fade-b pointer-events-none absolute inset-0" />
 
@@ -124,7 +129,7 @@ export function Hero({
           {greeting}
         </motion.p>
 
-        {/* name — letter by letter */}
+        {/* name — letter by letter, each one springy on hover */}
         <h1
           className="font-display text-[13vw] font-bold leading-[1.05] tracking-tight text-white sm:text-7xl md:text-8xl"
           aria-label={ownerName}
@@ -135,8 +140,14 @@ export function Hero({
               aria-hidden
               initial={{ y: 90, opacity: 0, rotateX: -70 }}
               animate={{ y: 0, opacity: 1, rotateX: 0 }}
+              whileHover={{
+                y: -16,
+                scale: 1.14,
+                rotateX: 12,
+                transition: { type: "spring", stiffness: 420, damping: 12 },
+              }}
               transition={{ delay: 0.45 + i * 0.04, duration: 0.7, ease: EASE }}
-              className="inline-block will-change-transform hover:text-gradient"
+              className="inline-block cursor-default will-change-transform hover:text-gradient"
               style={{ transformStyle: "preserve-3d" }}
             >
               {letter === " " ? "\u00A0" : letter}

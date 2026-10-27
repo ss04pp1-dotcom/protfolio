@@ -113,7 +113,7 @@ export function SettingsManager({
         </TabsContent>
 
         <TabsContent value="about" className="mt-6 space-y-5">
-          <Field label="About Section Title">
+          <Field label="About Section Title" hint="Wrap words in *asterisks* for the premium italic gradient accent — e.g. Crafting digital *magic* since day one">
             <Input value={form.aboutTitle} onChange={(e) => set("aboutTitle", e.target.value)} className={inputCls} />
           </Field>
           <Field label="About Text" hint="Write **word** to make it bold. Blank line = new paragraph.">
@@ -142,6 +142,46 @@ export function SettingsManager({
         </TabsContent>
 
         <TabsContent value="theme" className="mt-6 space-y-5">
+          {/* one-click premium palettes */}
+          <Field label="Theme Presets" hint="One click applies a curated premium palette — fine-tune the colors below afterwards.">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+              {THEME_PRESETS.map((preset) => {
+                const active =
+                  form.primaryColor.toLowerCase() === preset.primary.toLowerCase() &&
+                  form.accentColor.toLowerCase() === preset.accent.toLowerCase();
+                return (
+                  <motion.button
+                    key={preset.name}
+                    type="button"
+                    whileHover={{ y: -3 }}
+                    whileTap={{ scale: 0.96 }}
+                    onClick={() => {
+                      set("primaryColor", preset.primary);
+                      set("accentColor", preset.accent);
+                    }}
+                    data-cursor
+                    className={`relative flex flex-col items-center gap-2 rounded-2xl border p-3.5 transition-all duration-300 ${
+                      active
+                        ? "border-white/40 bg-white/[0.07] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.6)]"
+                        : "border-white/10 bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.05]"
+                    }`}
+                  >
+                    <span
+                      className="h-9 w-9 rounded-full shadow-lg"
+                      style={{ background: `linear-gradient(135deg, ${preset.primary}, ${preset.accent})` }}
+                    />
+                    <span className="text-[11px] font-semibold text-white/70">{preset.name}</span>
+                    {active && (
+                      <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-gradient-to-br from-[var(--site-primary)] to-[var(--site-accent)] text-[10px] text-white">
+                        ✓
+                      </span>
+                    )}
+                  </motion.button>
+                );
+              })}
+            </div>
+          </Field>
+
           <div className="grid gap-5 sm:grid-cols-2">
             <ColorField label="Primary Color" value={form.primaryColor} onChange={(v) => set("primaryColor", v)} />
             <ColorField label="Accent Color" value={form.accentColor} onChange={(v) => set("accentColor", v)} />
@@ -201,6 +241,15 @@ export function SettingsManager({
 
 const inputCls =
   "border-white/10 bg-white/[0.05] text-white placeholder:text-white/25 focus:border-[var(--site-primary)]/60 focus-visible:ring-[var(--site-primary)]/30";
+
+/** Curated premium palettes — one click in the Theme tab. */
+const THEME_PRESETS = [
+  { name: "Royal Violet", primary: "#8b5cf6", accent: "#d946ef" },
+  { name: "Sunset Gold", primary: "#f59e0b", accent: "#ef4444" },
+  { name: "Emerald Luxe", primary: "#10b981", accent: "#a3e635" },
+  { name: "Rose Noir", primary: "#f43f5e", accent: "#a855f7" },
+  { name: "Amber Flame", primary: "#fbbf24", accent: "#f97316" },
+] as const;
 
 function Field({ label, hint, children }: { label: string; hint?: string; children: React.ReactNode }) {
   return (

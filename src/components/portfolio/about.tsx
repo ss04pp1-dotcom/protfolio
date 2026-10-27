@@ -5,7 +5,8 @@ import { Download, MapPin, BadgeCheck } from "lucide-react";
 import type { SiteSettings, SocialLink } from "@/lib/types";
 import { Reveal, StaggerGroup, StaggerItem } from "./reveal";
 import { SectionHeading } from "./section-heading";
-import { Marquee } from "./marquee";
+import { VelocityMarquee } from "./velocity-marquee";
+import { WordReveal } from "./word-reveal";
 
 export function About({ settings, marqueeItems }: { settings: SiteSettings; marqueeItems: string[] }) {
   const initials = settings.ownerName
@@ -19,7 +20,11 @@ export function About({ settings, marqueeItems }: { settings: SiteSettings; marq
 
   return (
     <section id="about" className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
-      <SectionHeading eyebrow="Who I Am" title={settings.aboutTitle} />
+      <SectionHeading
+        eyebrow="Who I Am"
+        title={settings.aboutTitle || "About Me"}
+        index={1}
+      />
 
       <div className="mt-16 grid items-center gap-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
         {/* Avatar with rotating conic ring + orbit dots */}
@@ -60,25 +65,17 @@ export function About({ settings, marqueeItems }: { settings: SiteSettings; marq
           </div>
         </Reveal>
 
-        {/* Text */}
+        {/* Text — words light up one by one as you scroll */}
         <div>
-          <StaggerGroup className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5">
             {paragraphs.map((p, i) => (
-              <StaggerItem key={i}>
-                <p className="text-base leading-relaxed text-white/60 md:text-lg">
-                  {p.split(" ").map((word, wi) =>
-                    word.startsWith("**") && word.endsWith("**") ? (
-                      <strong key={wi} className="font-semibold text-white">
-                        {word.slice(2, -2)}
-                      </strong>
-                    ) : (
-                      <span key={wi}>{word} </span>
-                    )
-                  )}
-                </p>
-              </StaggerItem>
+              <WordReveal
+                key={i}
+                text={p}
+                className="text-base leading-relaxed text-white/60 md:text-lg"
+              />
             ))}
-          </StaggerGroup>
+          </div>
 
           {/* meta info */}
           <StaggerGroup className="mt-8 grid gap-4 sm:grid-cols-2" stagger={0.1}>
@@ -109,13 +106,13 @@ export function About({ settings, marqueeItems }: { settings: SiteSettings; marq
         </div>
       </div>
 
-      {/* marquee strip */}
+      {/* scroll-velocity marquee strip */}
       {marqueeItems.length > 0 && (
         <Reveal delay={0.1} className="mt-24">
-          <div className="glass rounded-2xl py-5">
-            <Marquee
+          <div className="glass rounded-2xl py-6">
+            <VelocityMarquee
               items={marqueeItems}
-              itemClassName="font-display text-lg font-semibold text-white/60 transition-colors hover:text-white md:text-xl"
+              itemClassName="font-display text-2xl font-bold tracking-tight md:text-3xl"
             />
           </div>
         </Reveal>

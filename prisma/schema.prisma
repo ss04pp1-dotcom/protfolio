@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String    @id @default(cuid())
+  username     String    @unique
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  sessions     Session[]
+}
+
+model Session {
+  token     String   @id
+  adminId   String
+  admin     Admin    @relation(fields: [adminId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model SiteSetting {
+  id           String   @id @default("main")
+  // Hero
+  siteTitle    String   @default("Portfolio")
+  ownerName    String   @default("Your Name")
+  heroGreeting String   @default("Hello, I'm")
+  heroRoles    String   @default("Full-Stack Developer, UI/UX Designer, Creative Coder")
+  heroTagline  String   @default("")
+  avatarUrl    String   @default("")
+  // About
+  aboutTitle   String   @default("About Me")
+  aboutText    String   @default("")
+  resumeUrl    String   @default("")
+  // Contact
+  email        String   @default("")
+  phone        String   @default("")
+  location     String   @default("")
+  availability String   @default("Available for work")
+  // Theme (live-editable)
+  primaryColor String   @default("#8b5cf6")
+  accentColor  String   @default("#d946ef")
+  // Marquee strip
+  marqueeText  String   @default("")
+  // Footer
+  footerText   String   @default("")
+  updatedAt    DateTime @updatedAt
+}
+
+model Skill {
+  id       String @id @default(cuid())
+  name     String
+  category String @default("Other")
+  level    Int    @default(80)
+  icon     String @default("Sparkles")
+  order    Int    @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Project {
+  id          String  @id @default(cuid())
+  title       String
+  description String  @default("")
+  imageUrl    String  @default("")
+  tags        String  @default("")
+  githubUrl   String  @default("")
+  liveUrl     String  @default("")
+  featured    Boolean @default(false)
+  order       Int     @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Experience {
+  id          String  @id @default(cuid())
+  role        String
+  company     String
+  period      String  @default("")
+  description String  @default("")
+  current     Boolean @default(false)
+  order       Int     @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Education {
+  id          String @id @default(cuid())
+  degree      String
+  institution String
+  period      String @default("")
+  description String @default("")
+  order       Int    @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Service {
+  id          String @id @default(cuid())
+  title       String
+  description String @default("")
+  icon        String @default("Sparkles")
+  order       Int    @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Testimonial {
+  id        String @id @default(cuid())
+  name      String
+  role      String @default("")
+  company   String @default("")
+  content   String @default("")
+  avatarUrl String @default("")
+  rating    Int    @default(5)
+  order     Int    @default(0)
+  createdAt DateTime @default(now())
+}
+
+model SocialLink {
+  id       String @id @default(cuid())
+  platform String
+  url      String
+  icon     String @default("Link")
+  order    Int    @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Stat {
+  id     String @id @default(cuid())
+  label  String
+  value  Int    @default(0)
+  suffix String @default("+")
+  order  Int    @default(0)
+  createdAt DateTime @default(now())
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String   @default("")
+  content   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}

@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { Github, ExternalLink, Star, X, Layers3 } from "lucide-react";
 import type { Project } from "@/lib/types";
-import { SectionHeading } from "./section-heading";
+import { SectionHeading, Accent } from "./section-heading";
 import { Reveal } from "./reveal";
 import { Tilt } from "./tilt";
 
@@ -30,8 +30,13 @@ export function Projects({ projects }: { projects: Project[] }) {
 
       <SectionHeading
         eyebrow="Selected Work"
-        title="Projects That Speak"
+        title={
+          <>
+            Projects That <Accent>Speak</Accent>
+          </>
+        }
         description="Filter by technology, tilt the cards, open one for the full story — every project shipped with obsessive attention to detail."
+        index={4}
       />
 
       {/* filter pills */}
@@ -77,7 +82,8 @@ export function Projects({ projects }: { projects: Project[] }) {
                   onClick={() => setSelected(project)}
                   onKeyDown={(e) => e.key === "Enter" && setSelected(project)}
                   data-cursor
-                  className="glass relative flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl transition-all duration-400 hover:-translate-y-1.5 hover:border-[var(--site-primary)]/50 hover:shadow-[0_24px_70px_-24px_rgba(139,92,246,0.6)]"
+                  data-cursor-label="View"
+                  className="glass spotlight-card relative flex h-full cursor-pointer flex-col overflow-hidden rounded-3xl transition-all duration-400 hover:-translate-y-1.5 hover:border-[var(--site-primary)]/50 hover:shadow-[0_24px_70px_-24px_rgba(139,92,246,0.6)]"
                 >
                   {/* cover */}
                   <div className="relative h-52 shrink-0 overflow-hidden">
@@ -210,23 +216,36 @@ export function Projects({ projects }: { projects: Project[] }) {
 
 function ProjectCover({ project, big = false }: { project: Project; big?: boolean }) {
   const [failed, setFailed] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  // parallax — the cover drifts gently as the card travels through the viewport
+  const { scrollYProgress } = useScroll({
+    target: wrapRef,
+    offset: ["start end", "end start"],
+  });
+  const y = useTransform(scrollYProgress, [0, 1], ["-7%", "7%"]);
   const initial = project.title.charAt(0).toUpperCase();
 
   if (!project.imageUrl || failed) {
     return (
-      <div className="bg-grid relative flex h-full w-full items-center justify-center bg-gradient-to-br from-[#1b1530] via-[#151022] to-[#0f0b18]">
+      <div ref={wrapRef} className="bg-grid relative h-full w-full items-center justify-center bg-gradient-to-br from-[#1b1530] via-[#151022] to-[#0f0b18] flex">
         <span className="text-gradient font-display text-8xl font-bold opacity-90">{initial}</span>
         <div className="absolute inset-0 animate-gradient-pan bg-[radial-gradient(circle_at_30%_20%,rgba(139,92,246,0.18),transparent_55%),radial-gradient(circle_at_75%_80%,rgba(217,70,239,0.15),transparent_55%)] [background-size:220%_220%]" />
       </div>
     );
   }
   return (
-    <img
-      src={project.imageUrl}
-      alt={project.title}
-      onError={() => setFailed(true)}
-      loading="lazy"
-      className={`h-full w-full object-cover transition-transform duration-700 ${big ? "" : "group-hover:scale-110"}`}
-    />
+    <div ref={wrapRef} className="relative h-full w-full overflow-hidden">
+      <motion.img
+        src={project.imageUrl}
+        alt={project.title}
+        onError={() => setFailed(true)}
+        loading="lazy"
+        style={big ? undefined : { y, scale: 1.16 }}
+        className="h-full w-full object-cover will-change-transform"
+      />
+      {!big && (
+        <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#0c0913]/60 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+      )}
+    </div>
   );
 }

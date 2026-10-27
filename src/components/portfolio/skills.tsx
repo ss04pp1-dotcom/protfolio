@@ -4,10 +4,13 @@ import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Skill } from "@/lib/types";
 import { DynIcon } from "@/components/icon";
-import { SectionHeading } from "./section-heading";
+import { SectionHeading, Accent } from "./section-heading";
 import { Reveal } from "./reveal";
 import { Marquee } from "./marquee";
 import { Tilt } from "./tilt";
+
+const RING_R = 26;
+const RING_C = 2 * Math.PI * RING_R;
 
 export function Skills({ skills }: { skills: Skill[] }) {
   const categories = useMemo(
@@ -25,8 +28,13 @@ export function Skills({ skills }: { skills: Skill[] }) {
 
       <SectionHeading
         eyebrow="My Arsenal"
-        title="Skills & Superpowers"
-        description="A toolkit sharpened by real projects — hover a card to feel it tilt, watch the bars fill as you scroll."
+        title={
+          <>
+            Skills & <Accent>Superpowers</Accent>
+          </>
+        }
+        description="A toolkit sharpened by real projects — hover a card to feel it tilt, watch the rings fill as you scroll."
+        index={3}
       />
 
       {/* category tabs */}
@@ -67,9 +75,35 @@ export function Skills({ skills }: { skills: Skill[] }) {
               <Tilt max={10} className="group h-full">
                 <div className="glass spotlight-card relative h-full overflow-hidden rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:border-[var(--site-primary)]/45 hover:shadow-[0_18px_50px_-18px_rgba(139,92,246,0.55)]">
                   <div className="flex items-center justify-between">
-                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--site-primary)]/22 to-[var(--site-accent)]/22 text-[var(--site-accent)] transition-all duration-300 group-hover:scale-110 group-hover:from-[var(--site-primary)]/40 group-hover:to-[var(--site-accent)]/40 group-hover:text-white">
-                      <DynIcon name={skill.icon} className="h-6 w-6" />
-                    </span>
+                    <div className="relative flex h-16 w-16 items-center justify-center">
+                      {/* circular level ring */}
+                      <svg aria-hidden className="absolute inset-0 h-full w-full -rotate-90" viewBox="0 0 60 60">
+                        <defs>
+                          <linearGradient id={`ring-${skill.id}`} x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="var(--site-primary)" />
+                            <stop offset="100%" stopColor="var(--site-accent)" />
+                          </linearGradient>
+                        </defs>
+                        <circle cx="30" cy="30" r={RING_R} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="2.5" />
+                        <motion.circle
+                          cx="30"
+                          cy="30"
+                          r={RING_R}
+                          fill="none"
+                          stroke={`url(#ring-${skill.id})`}
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeDasharray={RING_C}
+                          initial={{ strokeDashoffset: RING_C }}
+                          whileInView={{ strokeDashoffset: RING_C * (1 - skill.level / 100) }}
+                          viewport={{ once: true, margin: "-30px" }}
+                          transition={{ duration: 1.5, delay: 0.2 + i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                        />
+                      </svg>
+                      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-[var(--site-primary)]/22 to-[var(--site-accent)]/22 text-[var(--site-accent)] transition-all duration-300 group-hover:scale-110 group-hover:from-[var(--site-primary)]/45 group-hover:to-[var(--site-accent)]/45 group-hover:text-white">
+                        <DynIcon name={skill.icon} className="h-5.5 w-5.5" />
+                      </span>
+                    </div>
                     <span className="font-mono text-sm font-semibold text-white/35 transition-colors group-hover:text-white/70">
                       {skill.level}%
                     </span>
@@ -77,7 +111,7 @@ export function Skills({ skills }: { skills: Skill[] }) {
                   <h3 className="mt-5 font-display text-lg font-semibold text-white">{skill.name}</h3>
                   <p className="mt-0.5 text-xs uppercase tracking-wider text-white/35">{skill.category}</p>
 
-                  {/* animated bar */}
+                  {/* animated bar with shimmer tip */}
                   <div className="mt-5 h-2 overflow-hidden rounded-full bg-white/[0.07]">
                     <motion.div
                       initial={{ width: 0 }}
@@ -86,7 +120,7 @@ export function Skills({ skills }: { skills: Skill[] }) {
                       transition={{ duration: 1.25, delay: 0.15 + i * 0.05, ease: [0.16, 1, 0.3, 1] }}
                       className="relative h-full rounded-full bg-gradient-to-r from-[var(--site-primary)] to-[var(--site-accent)]"
                     >
-                      <span className="absolute inset-0 rounded-full bg-white/25 opacity-0 transition-opacity duration-300 group-hover:animate-pulse" />
+                      <span className="absolute right-0 top-1/2 h-3.5 w-3.5 -translate-y-1/2 translate-x-1/2 rounded-full bg-white/70 opacity-0 blur-[2px] transition-opacity duration-300 group-hover:animate-pulse group-hover:opacity-100" />
                     </motion.div>
                   </div>
                 </div>

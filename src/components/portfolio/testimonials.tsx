@@ -5,8 +5,9 @@ import useEmblaCarousel from "embla-carousel-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Quote, Star, ChevronLeft, ChevronRight } from "lucide-react";
 import type { Testimonial } from "@/lib/types";
-import { SectionHeading } from "./section-heading";
+import { SectionHeading, Accent } from "./section-heading";
 import { Reveal } from "./reveal";
+import { Tilt } from "./tilt";
 
 export function Testimonials({ testimonials }: { testimonials: Testimonial[] }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" });
@@ -40,8 +41,13 @@ export function Testimonials({ testimonials }: { testimonials: Testimonial[] }) 
 
       <SectionHeading
         eyebrow="Kind Words"
-        title="What Clients Say"
+        title={
+          <>
+            What Clients <Accent>Say</Accent>
+          </>
+        }
         description="Real feedback from real collaborations — the carousel keeps rolling, just like my work ethic."
+        index={7}
       />
 
       <Reveal className="mt-16" delay={0.1}>
@@ -54,6 +60,7 @@ export function Testimonials({ testimonials }: { testimonials: Testimonial[] }) 
             <div className="-ml-6 flex touch-pan-y">
               {testimonials.map((t) => (
                 <div key={t.id} className="min-w-0 shrink-0 grow-0 basis-full pl-6 sm:basis-1/2 xl:basis-1/3">
+                  <Tilt max={7} className="group h-full">
                   <motion.figure
                     whileHover={{ y: -8 }}
                     transition={{ type: "spring", stiffness: 260, damping: 22 }}
@@ -103,6 +110,7 @@ export function Testimonials({ testimonials }: { testimonials: Testimonial[] }) 
                       </div>
                     </figcaption>
                   </motion.figure>
+                  </Tilt>
                 </div>
               ))}
             </div>

@@ -15,6 +15,7 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-space), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jet), ui-monospace, monospace;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, serif;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -101,9 +102,29 @@
   }
   html {
     scroll-behavior: smooth;
+    /* non-static position keeps framer-motion scroll-offset math exact */
+    position: relative;
   }
   body {
     @apply bg-background text-foreground;
+  }
+  /* Cinematic film grain — fixed fractal-noise overlay for tactile depth */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: -50%;
+    z-index: 90;
+    pointer-events: none;
+    opacity: 0.032;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation: grain-shift 0.9s steps(4) infinite;
+  }
+  @keyframes grain-shift {
+    0% { transform: translate(0, 0); }
+    25% { transform: translate(-2%, 1.4%); }
+    50% { transform: translate(1.6%, -1.2%); }
+    75% { transform: translate(-1.2%, -1.8%); }
+    100% { transform: translate(0, 0); }
   }
   ::selection {
     background: color-mix(in srgb, var(--site-primary) 45%, transparent);
@@ -219,6 +240,96 @@
 }
 .spotlight-card:hover::after {
   opacity: 1;
+}
+
+/* Rotating conic border that appears on hover (premium card frames) */
+.conic-hover {
+  position: relative;
+  border-radius: inherit;
+}
+.conic-hover::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--angle),
+    transparent 15%,
+    var(--site-primary) 38%,
+    var(--site-accent) 62%,
+    transparent 85%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: border-spin 3.6s linear infinite;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 2;
+}
+.conic-hover:hover::before {
+  opacity: 1;
+}
+
+/* Outlined (hollow) display text — ghost numbers & footer name */
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1.5px oklch(1 0 0 / 14%);
+}
+.text-outline-strong {
+  color: transparent;
+  -webkit-text-stroke: 1.5px oklch(1 0 0 / 30%);
+}
+
+/* Aurora layers — slow drifting mesh gradients (hero) */
+@keyframes aurora-drift {
+  0%, 100% {
+    transform: translate3d(-6%, -4%, 0) rotate(0deg) scale(1);
+  }
+  33% {
+    transform: translate3d(5%, 6%, 0) rotate(12deg) scale(1.12);
+  }
+  66% {
+    transform: translate3d(-4%, 5%, 0) rotate(-10deg) scale(0.94);
+  }
+}
+@keyframes aurora-drift-alt {
+  0%, 100% {
+    transform: translate3d(5%, 3%, 0) rotate(0deg) scale(1.05);
+  }
+  50% {
+    transform: translate3d(-6%, -5%, 0) rotate(-14deg) scale(0.92);
+  }
+}
+@keyframes hue-drift {
+  0%, 100% {
+    filter: blur(90px) hue-rotate(0deg);
+  }
+  50% {
+    filter: blur(110px) hue-rotate(24deg);
+  }
+}
+.animate-aurora {
+  animation: aurora-drift 18s ease-in-out infinite;
+}
+.animate-aurora-alt {
+  animation: aurora-drift-alt 22s ease-in-out infinite;
+}
+.animate-hue-drift {
+  animation: hue-drift 16s ease-in-out infinite;
+}
+
+/* Ghost section number — huge outlined numeral floating beside a section */
+.ghost-number {
+  font-family: var(--font-space), sans-serif;
+  font-weight: 700;
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 1.5px oklch(1 0 0 / 7%);
+  user-select: none;
+  pointer-events: none;
 }
 
 /* ---------------- Keyframes ---------------- */
@@ -405,7 +516,12 @@
   .animate-pulse-ring,
   .animate-spin-slow,
   .animate-shimmer,
-  .gradient-border::before {
+  .animate-aurora,
+  .animate-aurora-alt,
+  .animate-hue-drift,
+  .gradient-border::before,
+  .conic-hover::before,
+  body::after {
     animation: none !important;
   }
   html {

@@ -1,21 +1,37 @@
 "use client";
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, AnimatePresence, useScroll, useSpring, useTransform } from "framer-motion";
 import { Briefcase, GraduationCap, Building2, CalendarDays } from "lucide-react";
 import type { Experience, Education } from "@/lib/types";
-import { SectionHeading } from "./section-heading";
+import { SectionHeading, Accent } from "./section-heading";
 import { Reveal } from "./reveal";
 
 export function Journey({ experiences, education }: { experiences: Experience[]; education: Education[] }) {
   const [tab, setTab] = useState<"exp" | "edu">("exp");
+  // the spine fills in lock-step with the visitor's scroll position
+  const lineRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: lineRef,
+    offset: ["start 0.82", "end 0.58"],
+  });
+  const lineScale = useSpring(scrollYProgress, { stiffness: 90, damping: 24, mass: 0.4 });
+  const headTop = useSpring(useTransform(scrollYProgress, [0, 1], ["0%", "100%"]), {
+    stiffness: 90,
+    damping: 24,
+  });
 
   return (
     <section id="journey" className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
       <SectionHeading
         eyebrow="My Path"
-        title="The Journey So Far"
+        title={
+          <>
+            The Journey <Accent>So Far</Accent>
+          </>
+        }
         description="A timeline of roles that shaped me — watch the line draw itself as you scroll."
+        index={5}
       />
 
       {/* tab switcher */}
@@ -50,15 +66,22 @@ export function Journey({ experiences, education }: { experiences: Experience[];
       </Reveal>
 
       {/* timeline */}
-      <div className="relative mx-auto mt-16 max-w-4xl overflow-x-clip">
-        {/* animated center line */}
+      <div ref={lineRef} className="relative mx-auto mt-16 max-w-4xl overflow-x-clip">
+        {/* scroll-linked spine + travelling glow head */}
+        <div
+          aria-hidden
+          className="absolute left-5 top-0 h-full w-[2.5px] rounded-full bg-white/[0.07] md:left-1/2 md:-translate-x-1/2"
+        />
         <motion.div
           aria-hidden
-          initial={{ scaleY: 0 }}
-          whileInView={{ scaleY: 1 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 1.6, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute left-5 top-0 h-full w-[2.5px] origin-top rounded-full bg-gradient-to-b from-[var(--site-primary)] via-[var(--site-accent)] to-transparent md:left-1/2 md:-translate-x-1/2"
+          style={{ scaleY: lineScale }}
+          className="absolute left-5 top-0 h-full w-[2.5px] origin-top rounded-full bg-gradient-to-b from-[var(--site-primary)] via-[var(--site-accent)] to-transparent shadow-[0_0_18px_rgba(139,92,246,0.45)] md:left-1/2 md:-translate-x-1/2"
+        />
+        {/* glow head riding the line */}
+        <motion.span
+          aria-hidden
+          style={{ top: headTop }}
+          className="absolute left-5 z-10 hidden h-3 w-3 -translate-x-[5.5px] rounded-full bg-white shadow-[0_0_16px_4px_var(--site-primary)] md:left-1/2 md:block"
         />
 
         <AnimatePresence mode="wait">
