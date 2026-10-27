@@ -1,12 +1,13 @@
-import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { destroySession, SESSION_COOKIE } from "@/lib/auth";
+import { NextRequest } from "next/server";
+import { getLocalClient } from "@/lib/server/local";
+import { destroySession, clearSessionCookie, readCookie, SESSION_COOKIE } from "@/lib/server/auth";
+import { json } from "@/lib/server/http";
 
-export async function POST(_req: NextRequest) {
-  const store = await cookies();
-  const token = store.get(SESSION_COOKIE)?.value;
-  if (token) await destroySession(token);
-  const res = NextResponse.json({ ok: true });
-  res.cookies.set(SESSION_COOKIE, "", { httpOnly: true, path: "/", maxAge: 0 });
-  return res;
+export const dynamic = "force-dynamic";
+
+export async function POST(req: NextRequest) {
+  const sql = getLocalClient();
+  const token = readCookie(req, SESSION_COOKIE);
+  if (token) await destroySession(sql, token);
+  return json({ ok: true }, 200, { "Set-Cookie": clearSessionCookie() });
 }

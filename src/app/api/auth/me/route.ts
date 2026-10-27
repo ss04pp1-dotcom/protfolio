@@ -1,8 +1,13 @@
-import { NextResponse } from "next/server";
-import { getAdmin } from "@/lib/auth";
+import { NextRequest } from "next/server";
+import { getLocalClient } from "@/lib/server/local";
+import { getAdmin, readCookie, SESSION_COOKIE } from "@/lib/server/auth";
+import { json } from "@/lib/server/http";
 
-export async function GET() {
-  const admin = await getAdmin();
-  if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  return NextResponse.json({ username: admin.username });
+export const dynamic = "force-dynamic";
+
+export async function GET(req: NextRequest) {
+  const sql = getLocalClient();
+  const admin = await getAdmin(sql, readCookie(req, SESSION_COOKIE));
+  if (!admin) return json({ error: "Unauthorized" }, 401);
+  return json({ username: admin.username });
 }

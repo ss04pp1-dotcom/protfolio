@@ -1,30 +1,20 @@
-import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
-import { verifyPassword, createSession, SESSION_COOKIE } from "@/lib/auth";
+import { NextRequest } from "next/server";
+import { getLocalClient } from "@/lib/server/local";
+import { loginAdmin, sessionCookie } from "@/lib/server/auth";
+import { json, errorResponse, readJsonBody } from "@/lib/server/http";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json().catch(() => null);
+    const body = await readJsonBody(req);
     if (!body?.username || !body?.password) {
-      return NextResponse.json({ error: "Username and password required" }, { status: 400 });
+      return json({ error: "Username and password required" }, 400);
     }
-
-    const admin = await db.admin.findFirst({ where: { username: String(body.username).trim() } });
-    if (!admin || !verifyPassword(String(body.password), admin.passwordHash)) {
-      return NextResponse.json({ error: "Invalid username or password" }, { status: 401 });
-    }
-
-    const token = await createSession(admin.id);
-    const res = NextResponse.json({ ok: true, username: admin.username });
-    res.cookies.set(SESSION_COOKIE, token, {
-      httpOnly: true,
-      sameSite: "lax",
-      path: "/",
-      maxAge: 7 * 24 * 60 * 60,
-    });
-    return res;
+    const sql = getLocalClient();
+    const { token, username } = await loginAdmin(sql, String(body.username), String(body.password));
+    return json({ ok: true, username }, 200, { "Set-Cookie": sessionCookie(token) });
   } catch (e) {
-    console.error("login error", e);
-    return NextResponse.json({ error: "Login failed" }, { status: 500 });
+    return errorResponse(e, "Login failed");
   }
 }

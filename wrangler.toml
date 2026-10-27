@@ -1,0 +1,19 @@
+#:schema node_modules/wrangler/config-schema.json
+# ============================================================
+# Cloudflare Pages configuration
+#
+# Project name "mdsalahuddin" → https://mdsalahuddin.pages.dev
+# (change `name` if that subdomain is already taken)
+#
+# The D1 database_id placeholder is replaced automatically by the
+# GitHub Actions workflow on the first deploy.
+# ============================================================
+
+name = "mdsalahuddin"
+compatibility_date = "2025-09-01"
+pages_build_output_dir = "./out"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "portfolio-db"
+database_id = "__D1_DATABASE_ID__"
