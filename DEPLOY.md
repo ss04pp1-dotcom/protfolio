@@ -125,6 +125,14 @@ bun run dev          # http://localhost:3000
 | Admin লগইন কাজ করছে না | ডিফল্ট `admin / admin123` — পাসওয়ার্ড আগে বদলালে থেকে গেছে, ডাটাবেস রিসিড করতে চাইলে Cloudflare D1-এ `portfolio-db` ডিলিট করে আবার push করুন |
 | ছবি সেভ হচ্ছে না / খুব বড় | ছবি base64 আকারে D1-এ থাকে — Admin-এর ImageField নিজেই ছবি কমপ্রেস করে; D1 ফ্রি টিয়ারে ৫GB পর্যন্ত জায়গা |
 
+### ⚠️ সবচেয়ে জরুরি: Cloudflare ড্যাশবোর্ড থেকে "Connect to Git" করবেন না!
+
+এই রিপো **GitHub Actions দিয়ে** ডিপ্লয় হওয়ার জন্যই বানানো। Cloudflare ড্যাশবোর্ডে Workers & Pages → Create → Pages → **Connect to Git** দিয়ে রিপো কানেক্ট করলে ডিপ্লয় ফেইল হবে — কারণ ড্যাশবোর্ড বিল্ড D1 ডাটাবেস বানায় না, schema/seed চালায় না, আর সঠিক বিল্ড কমান্ড (`BUILD_EXPORT=1`) সেট করা থাকে না।
+
+যদি ইতিমধ্যে কানেক্ট করে থাকেন: Cloudflare ড্যাশবোর্ড → **Workers & Pages** → ওই প্রজেক্টে যান → **Settings** → স্ক্রল করে **Delete** করে দিন। তারপর GitHub Secrets দুটো যোগ করে Actions থেকে ডিপ্লয় চালান — `mdsalahuddin` প্রজেক্ট Actions নিজেই বানিয়ে নেবে।
+
+মনে রাখবেন: **Secrets যোগ করার আগে প্রতিটা push-এ Actions লাল (failed) দেখাবে — এটা স্বাভাবিক।** Secrets যোগ করে workflow re-run করলেই সবুজ হয়ে যাবে।
+
 ---
 
 ## 🔑 নিরাপত্তা নোট

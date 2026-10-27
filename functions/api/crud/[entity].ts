@@ -1,8 +1,8 @@
 /** /api/crud/[entity] — GET (admin) list, POST create (public for messages). */
-import { ENTITIES, listEntity, createEntity } from "../../src/lib/server/core";
-import { requireAdmin, readCookie, SESSION_COOKIE } from "../../src/lib/server/auth";
-import { json, errorResponse, readJsonBody } from "../../src/lib/server/http";
-import { sqlFrom, type FunctionContext } from "../_context";
+import { ENTITIES, listEntity, createEntity } from "../../../src/lib/server/core";
+import { requireAdmin, readCookie, SESSION_COOKIE } from "../../../src/lib/server/auth";
+import { json, errorResponse, readJsonBody } from "../../../src/lib/server/http";
+import { sqlFrom, type FunctionContext } from "../../_context";
 
 type Ctx = FunctionContext<{ entity: string }>;
 
