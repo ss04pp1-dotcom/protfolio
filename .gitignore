@@ -70,3 +70,12 @@ server.log
 /examples/
 /download/
 /Caddyfile
+/tests/
+
+# E2E verification artifacts (screenshots + VLM reports)
+/scripts/*.png
+/scripts/vlm-*.json
+
+# legacy Prisma setup (replaced by sql/ + D1 in Task 2)
+/prisma/
+/.env
