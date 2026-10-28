@@ -30,6 +30,9 @@ export function Tilt({
   const glareBg = useMotionTemplate`radial-gradient(circle at ${glareX} ${glareY}, rgba(255,255,255,0.13), transparent 55%)`;
 
   function onMove(e: React.MouseEvent) {
+    if (typeof window !== "undefined" && !window.matchMedia("(any-hover: hover)").matches) {
+      return;
+    }
     const el = ref.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();

@@ -30,7 +30,7 @@ export function AdminGate({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.3 }}
-          className="fixed inset-0 z-[150] flex items-center justify-center bg-[#08060f]/90 p-0 backdrop-blur-2xl sm:p-6"
+          className="fixed inset-0 z-[150] flex items-center justify-center bg-[#08060f]/90 p-0 backdrop-blur-2xl overscroll-contain sm:p-6"
           role="dialog"
           aria-modal="true"
           aria-label="Admin panel"

@@ -1,0 +1,6 @@
+{
+  "name": "MD Salahuddin — Creative Full-Stack Portfolio & CMS",
+  "description": "High-performance full-stack developer portfolio and live CMS with SSR, SQLite WAL persistence, interactive project showcase, and real-time optimization audit.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

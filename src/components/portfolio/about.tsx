@@ -19,7 +19,7 @@ export function About({
   const displayAvatar = settings.avatarUrl || "/images/avatar.svg";
 
   return (
-    <section id="about" className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
+    <section id="about" className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-32 lg:px-8 overflow-x-clip">
       <SectionHeading
         eyebrow="Who I Am"
         title={settings.aboutTitle || "About Me"}

@@ -177,7 +177,7 @@ export function AdminDashboard({
           </button>
         </div>
 
-        <div className="relative flex-1 overflow-y-auto">
+        <div className="relative flex-1 overflow-y-auto overscroll-contain">
           {/* ambient glow */}
           <div aria-hidden className="pointer-events-none sticky top-0 -z-10 h-40 w-full bg-gradient-to-b from-[var(--site-primary)]/[0.07] to-transparent" />
 

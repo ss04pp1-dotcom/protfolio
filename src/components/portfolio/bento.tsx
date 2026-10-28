@@ -58,12 +58,10 @@ export function Bento({
         {/* ── Featured project — tall showcase tile ─────────────────── */}
         {featured && (
           <StaggerItem className="sm:col-span-2 lg:col-span-3 lg:row-span-2">
-            <motion.a
+            <a
               href="#projects"
-              whileHover={{ y: -6 }}
-              transition={{ type: "spring", stiffness: 260, damping: 22 }}
               data-cursor
-              className="conic-hover group relative flex h-full min-h-[22rem] flex-col justify-end overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#181227] to-[#0e0b17] p-7"
+              className="conic-hover group relative flex h-full min-h-[22rem] flex-col justify-end overflow-hidden rounded-3xl border border-white/[0.08] bg-gradient-to-br from-[#181227] to-[#0e0b17] p-7 transition-transform duration-300 hover:-translate-y-1.5"
             >
               {featured.imageUrl ? (
                 <img
@@ -93,7 +91,7 @@ export function Bento({
                   </span>
                 </span>
               </div>
-            </motion.a>
+            </a>
           </StaggerItem>
         )}
 

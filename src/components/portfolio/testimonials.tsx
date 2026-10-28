@@ -61,10 +61,8 @@ export function Testimonials({ testimonials }: { testimonials: Testimonial[] }) 
               {testimonials.map((t) => (
                 <div key={t.id} className="min-w-0 shrink-0 grow-0 basis-full pl-6 sm:basis-1/2 xl:basis-1/3">
                   <Tilt max={7} className="group h-full">
-                  <motion.figure
-                    whileHover={{ y: -8 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 22 }}
-                    className="glass group relative flex h-full flex-col rounded-3xl p-7 transition-colors duration-300 hover:border-[var(--site-accent)]/40"
+                  <figure
+                    className="glass group relative flex h-full flex-col rounded-3xl p-7 transition-all duration-300 hover:-translate-y-2 hover:border-[var(--site-accent)]/40"
                   >
                     <Quote aria-hidden className="h-9 w-9 rotate-180 text-[var(--site-primary)]/50 transition-colors duration-300 group-hover:text-[var(--site-primary)]" />
                     <blockquote className="mt-4 flex-1 text-[15px] leading-relaxed text-white/65">
@@ -109,7 +107,7 @@ export function Testimonials({ testimonials }: { testimonials: Testimonial[] }) 
                         </div>
                       </div>
                     </figcaption>
-                  </motion.figure>
+                  </figure>
                   </Tilt>
                 </div>
               ))}

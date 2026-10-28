@@ -23,6 +23,9 @@ export function Magnetic({
   const sy = useSpring(y, { stiffness: 180, damping: 14, mass: 0.4 });
 
   function onMove(e: React.MouseEvent) {
+    if (typeof window !== "undefined" && !window.matchMedia("(any-hover: hover)").matches) {
+      return;
+    }
     const el = ref.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();

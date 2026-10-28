@@ -21,8 +21,8 @@ export function CustomCursor() {
   const ringY = useSpring(y, { stiffness: 260, damping: 24, mass: 0.6 });
 
   useEffect(() => {
-    const fine = window.matchMedia("(pointer: fine)").matches;
-    if (!fine) return;
+    const isDesktop = window.matchMedia("(pointer: fine) and (any-hover: hover)").matches;
+    if (!isDesktop) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-time enable after mount (SSR-safe)
     setEnabled(true);
 

@@ -68,6 +68,7 @@ export function Hero({
   const orbY2 = useTransform(smy, [0, 1], [18, -18]);
 
   function onMouseMove(e: React.MouseEvent<HTMLElement>) {
+    if (typeof window !== "undefined" && !window.matchMedia("(any-hover: hover)").matches) return;
     const rect = e.currentTarget.getBoundingClientRect();
     mx.set((e.clientX - rect.left) / rect.width);
     my.set((e.clientY - rect.top) / rect.height);
@@ -148,14 +149,8 @@ export function Hero({
                   aria-hidden
                   initial={{ y: 70, opacity: 0, rotateX: -65 }}
                   animate={{ y: 0, opacity: 1, rotateX: 0 }}
-                  whileHover={{
-                    y: -12,
-                    scale: 1.12,
-                    rotateX: 12,
-                    transition: { type: "spring", stiffness: 420, damping: 12 },
-                  }}
                   transition={{ delay: 0.35 + i * 0.035, duration: 0.65, ease: EASE }}
-                  className="inline-block cursor-default will-change-transform hover:text-gradient"
+                  className="inline-block cursor-default will-change-transform transition-transform duration-300 hover:-translate-y-2.5 hover:scale-110 hover:text-gradient"
                   style={{ transformStyle: "preserve-3d" }}
                 >
                   {letter === " " ? "\u00A0" : letter}

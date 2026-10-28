@@ -34,7 +34,9 @@ export function Navbar({
   useMotionValueEvent(scrollY, "change", (y) => {
     const prev = scrollY.getPrevious() ?? 0;
     setScrolled(y > 24);
-    setHidden(y > 140 && y > prev && !menuOpen);
+    if (Math.abs(y - prev) > 6) {
+      setHidden(y > 140 && y > prev && !menuOpen);
+    }
   });
 
   // Active section tracking with IntersectionObserver

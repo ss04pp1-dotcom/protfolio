@@ -108,23 +108,15 @@
   body {
     @apply bg-background text-foreground;
   }
-  /* Cinematic film grain — fixed fractal-noise overlay for tactile depth */
+  /* Cinematic film grain — fixed subtle texture for depth without layout jitter */
   body::after {
     content: "";
     position: fixed;
-    inset: -50%;
+    inset: 0;
     z-index: 90;
     pointer-events: none;
-    opacity: 0.032;
+    opacity: 0.025;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    animation: grain-shift 0.9s steps(4) infinite;
-  }
-  @keyframes grain-shift {
-    0% { transform: translate(0, 0); }
-    25% { transform: translate(-2%, 1.4%); }
-    50% { transform: translate(1.6%, -1.2%); }
-    75% { transform: translate(-1.2%, -1.8%); }
-    100% { transform: translate(0, 0); }
   }
   ::selection {
     background: color-mix(in srgb, var(--site-primary) 45%, transparent);
