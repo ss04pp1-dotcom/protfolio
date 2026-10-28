@@ -29,9 +29,10 @@ jobs:
 
       - name: Build static site (Next.js export)
         run: |
-          rm -rf src/app/api
+          rm -rf app/api src/app/api
           BUILD_EXPORT=1 bunx next build
           # Only /api/* should hit the Pages Functions; everything else is static.
+          mkdir -p out
           echo '{"version":1,"include":["/api/*"],"exclude":[]}' > out/_routes.json
 
       - name: Ensure D1 database exists

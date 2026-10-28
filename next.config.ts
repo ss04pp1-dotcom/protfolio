@@ -18,7 +18,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  output: "standalone",
+  output: process.env.BUILD_EXPORT === "1" ? "export" : "standalone",
   transpilePackages: ["motion"],
   webpack: (config, { dev }) => {
     if (dev && process.env.DISABLE_HMR === "true") {
