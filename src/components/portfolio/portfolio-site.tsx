@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import type { SiteData } from "@/lib/types";
 import { Navbar } from "./navbar";
 import { Hero } from "./hero";
@@ -13,7 +12,6 @@ import { Services } from "./services";
 import { Testimonials } from "./testimonials";
 import { Contact } from "./contact";
 import { Footer, BackToTop } from "./footer";
-import { AuditDrawer } from "./audit-drawer";
 
 /**
  * PortfolioSite — composes every animated section of the public site.
@@ -21,14 +19,11 @@ import { AuditDrawer } from "./audit-drawer";
 export function PortfolioSite({
   data,
   onAdminClick,
-  onAvatarChange,
 }: {
   data: SiteData;
   onAdminClick: () => void;
-  onAvatarChange?: (newAvatarUrl: string) => Promise<void> | void;
 }) {
   const { settings } = data;
-  const [auditOpen, setAuditOpen] = useState(false);
   const roles = settings.heroRoles.split(",").map((r) => r.trim()).filter(Boolean);
   const marqueeItems = settings.marqueeText.split(",").map((m) => m.trim()).filter(Boolean);
 
@@ -38,7 +33,6 @@ export function PortfolioSite({
         ownerName={settings.ownerName}
         avatarUrl={settings.avatarUrl}
         onAdminClick={onAdminClick}
-        onOpenAudit={() => setAuditOpen(true)}
       />
       <main className="relative z-10 flex-1">
         <Hero
@@ -50,13 +44,11 @@ export function PortfolioSite({
           availability={settings.availability}
           socialLinks={data.socialLinks}
           stats={data.stats}
-          onAvatarChange={onAvatarChange}
-          onOpenAudit={() => setAuditOpen(true)}
+          resumeUrl={settings.resumeUrl}
         />
         <About
           settings={settings}
           marqueeItems={marqueeItems}
-          onAvatarChange={onAvatarChange}
         />
         <Bento settings={settings} stats={data.stats} skills={data.skills} projects={data.projects} />
         <Skills skills={data.skills} />
@@ -68,7 +60,6 @@ export function PortfolioSite({
       </main>
       <Footer settings={settings} socialLinks={data.socialLinks} />
       <BackToTop />
-      <AuditDrawer open={auditOpen} onClose={() => setAuditOpen(false)} />
     </div>
   );
 }

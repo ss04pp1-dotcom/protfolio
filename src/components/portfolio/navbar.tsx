@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useMotionValueEvent, useScroll } from "framer-motion";
-import { Menu, X, ShieldCheck, Sparkles, Terminal } from "lucide-react";
+import { Menu, X, ShieldCheck, Sparkles } from "lucide-react";
 import { Magnetic } from "./magnetic";
 
 export const NAV_SECTIONS = [
@@ -20,12 +20,10 @@ export function Navbar({
   ownerName,
   avatarUrl,
   onAdminClick,
-  onOpenAudit,
 }: {
   ownerName: string;
   avatarUrl?: string;
   onAdminClick: () => void;
-  onOpenAudit?: () => void;
 }) {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -39,7 +37,7 @@ export function Navbar({
     setHidden(y > 140 && y > prev && !menuOpen);
   });
 
-  // active section tracking
+  // Active section tracking with IntersectionObserver
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -56,7 +54,7 @@ export function Navbar({
     return () => observer.disconnect();
   }, []);
 
-  // lock scroll when mobile menu open
+  // Lock scroll when mobile menu open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => {
@@ -96,7 +94,7 @@ export function Navbar({
             </span>
           </a>
 
-          {/* Zone 2: Desktop links */}
+          {/* Zone 2: Section links */}
           <ul className="hidden items-center gap-1 lg:flex">
             {NAV_SECTIONS.map(({ id, label }) => (
               <li key={id}>
@@ -119,22 +117,8 @@ export function Navbar({
             ))}
           </ul>
 
-          {/* Zone 3: Actions */}
+          {/* Zone 3: Admin & Actions */}
           <div className="flex items-center gap-2 shrink-0">
-            {onOpenAudit && (
-              <Magnetic strength={0.2}>
-                <button
-                  type="button"
-                  onClick={onOpenAudit}
-                  data-cursor
-                  className="hidden items-center gap-1.5 rounded-full border border-[var(--site-primary)]/40 bg-[var(--site-primary)]/10 px-3.5 py-2 font-mono text-xs text-white/90 transition-all hover:bg-[var(--site-primary)]/20 sm:flex whitespace-nowrap shrink-0 cursor-pointer"
-                >
-                  <Terminal className="h-3.5 w-3.5 text-[var(--site-accent)]" />
-                  A–Z Audit
-                </button>
-              </Magnetic>
-            )}
-
             <Magnetic strength={0.25}>
               <button
                 onClick={onAdminClick}
@@ -204,20 +188,8 @@ export function Navbar({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ delay: 0.05 + NAV_SECTIONS.length * 0.055, duration: 0.45 }}
-                className="mt-8 flex flex-wrap justify-center gap-3"
+                className="mt-8 flex justify-center"
               >
-                {onOpenAudit && (
-                  <button
-                    onClick={() => {
-                      setMenuOpen(false);
-                      onOpenAudit();
-                    }}
-                    className="flex items-center gap-2 rounded-full border border-[var(--site-accent)]/40 bg-[var(--site-accent)]/10 px-6 py-3 font-mono text-xs text-white"
-                  >
-                    <Terminal className="h-4 w-4" />
-                    A–Z Audit Report
-                  </button>
-                )}
                 <button
                   onClick={() => {
                     setMenuOpen(false);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import type { SiteData } from "@/lib/types";
 import { PortfolioSite } from "@/components/portfolio/portfolio-site";
 import { Preloader } from "@/components/portfolio/preloader";
@@ -11,10 +11,8 @@ import { ScrollProgress } from "@/components/portfolio/scroll-progress";
 import { AdminGate } from "@/components/admin/admin-gate";
 
 export function HomeClient({ initialData }: { initialData: SiteData }) {
-  const [loading, setLoading] = useState(false);
-  const [preloading, setPreloading] = useState(false);
   const [site, setSite] = useState<SiteData>(initialData);
-  const [fetchError, setFetchError] = useState(false);
+  const [preloading, setPreloading] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
 
   const refreshSite = useCallback(async () => {
@@ -22,17 +20,14 @@ export function HomeClient({ initialData }: { initialData: SiteData }) {
       const res = await fetch("/api/site-data", { cache: "no-store" });
       if (!res.ok) throw new Error();
       const data = (await res.json()) as SiteData;
-      if (data.settings) {
+      if (data && data.settings) {
         if (!data.settings.avatarUrl) {
           data.settings.avatarUrl = "/images/avatar.svg";
         }
         setSite(data);
       }
-      setFetchError(false);
     } catch {
-      // Keep initialData if offline
-    } finally {
-      setLoading(false);
+      // Retain current state if offline
     }
   }, []);
 
@@ -40,7 +35,7 @@ export function HomeClient({ initialData }: { initialData: SiteData }) {
     refreshSite();
   }, [refreshSite]);
 
-  // live theme colors + tab title from settings
+  // Sync custom theme CSS variables + tab title from settings
   useEffect(() => {
     const root = document.documentElement;
     root.style.setProperty("--site-primary", site.settings.primaryColor || "#8b5cf6");
@@ -48,7 +43,7 @@ export function HomeClient({ initialData }: { initialData: SiteData }) {
     if (site.settings.siteTitle) document.title = site.settings.siteTitle;
   }, [site.settings.primaryColor, site.settings.accentColor, site.settings.siteTitle]);
 
-  // lock page scroll while admin overlay is open
+  // Lock body scroll while admin overlay is open
   useEffect(() => {
     document.body.style.overflow = adminOpen ? "hidden" : "";
     return () => {
@@ -61,26 +56,6 @@ export function HomeClient({ initialData }: { initialData: SiteData }) {
     refreshSite();
   };
 
-  const handleAvatarChange = async (newAvatarUrl: string) => {
-    setSite((prev) => ({
-      ...prev,
-      settings: {
-        ...prev.settings,
-        avatarUrl: newAvatarUrl,
-      },
-    }));
-
-    try {
-      await fetch("/api/avatar", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ avatarUrl: newAvatarUrl }),
-      });
-    } catch {
-      // Optimistic state is already updated
-    }
-  };
-
   return (
     <>
       {preloading && <Preloader name={site.settings.ownerName} onDone={() => setPreloading(false)} />}
@@ -88,7 +63,7 @@ export function HomeClient({ initialData }: { initialData: SiteData }) {
       <ParticleField />
       <ScrollProgress />
 
-      {/* main site */}
+      {/* Main site */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: preloading ? 0 : 1 }}
@@ -98,35 +73,10 @@ export function HomeClient({ initialData }: { initialData: SiteData }) {
         <PortfolioSite
           data={site}
           onAdminClick={() => setAdminOpen(true)}
-          onAvatarChange={handleAvatarChange}
         />
-
-        {/* loading / error states */}
-        <AnimatePresence>
-          {loading && (
-            <motion.div
-              exit={{ opacity: 0 }}
-              className="pointer-events-none fixed bottom-8 left-1/2 z-[60] -translate-x-1/2"
-            >
-              <span className="glass rounded-full px-5 py-2.5 text-sm text-white/60">
-                Syncing site data…
-              </span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        {fetchError && !loading && (
-          <div className="fixed bottom-8 left-1/2 z-[60] -translate-x-1/2">
-            <button
-              onClick={refreshSite}
-              className="glass rounded-full px-5 py-2.5 text-sm text-rose-300"
-            >
-              Couldn&apos;t reach the server — tap to retry
-            </button>
-          </div>
-        )}
       </motion.div>
 
-      {/* admin overlay */}
+      {/* Admin overlay gated by secure credentials */}
       <AdminGate
         open={adminOpen}
         onClose={handleAdminClose}
