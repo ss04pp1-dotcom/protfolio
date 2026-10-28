@@ -374,7 +374,7 @@ export function CrudShell({
                             ))}
                           </SelectContent>
                         </Select>
-                        {form[f.name] && (
+                        {Boolean(form[f.name]) && (
                           <span className="inline-flex items-center gap-2 rounded-lg bg-white/[0.05] px-3 py-1.5 text-xs text-white/60">
                             <DynIcon name={String(form[f.name])} className="h-4 w-4 text-[var(--site-accent)]" />
                             {String(form[f.name])}

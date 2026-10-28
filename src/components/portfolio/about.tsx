@@ -1,25 +1,90 @@
 "use client";
 
+import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Download, MapPin, BadgeCheck } from "lucide-react";
-import type { SiteSettings, SocialLink } from "@/lib/types";
-import { Reveal, StaggerGroup, StaggerItem } from "./reveal";
+import { Download, MapPin, BadgeCheck, Camera, CheckCircle2 } from "lucide-react";
+import type { SiteSettings } from "@/lib/types";
+import { Reveal, StaggerGroup } from "./reveal";
 import { SectionHeading } from "./section-heading";
 import { VelocityMarquee } from "./velocity-marquee";
 import { WordReveal } from "./word-reveal";
 
-export function About({ settings, marqueeItems }: { settings: SiteSettings; marqueeItems: string[] }) {
-  const initials = settings.ownerName
-    .split(" ")
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+async function compressAvatarFile(file: File, maxDim = 960, quality = 0.86): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Invalid image"));
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > maxDim || height > maxDim) {
+          if (width >= height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          resolve(reader.result as string);
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        const webp = canvas.toDataURL("image/webp", quality);
+        resolve(webp.startsWith("data:image/webp") ? webp : canvas.toDataURL("image/jpeg", quality));
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+export function About({
+  settings,
+  marqueeItems,
+  onAvatarChange,
+}: {
+  settings: SiteSettings;
+  marqueeItems: string[];
+  onAvatarChange?: (newAvatarUrl: string) => Promise<void> | void;
+}) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [uploading, setUploading] = useState(false);
+  const [savedToast, setSavedToast] = useState(false);
 
   const paragraphs = settings.aboutText.split("\n").filter(Boolean);
+  const displayAvatar = settings.avatarUrl || "/images/avatar.svg";
+
+  const handlePhotoSelect = async (file?: File) => {
+    if (!file || !onAvatarChange) return;
+    if (!file.type.startsWith("image/")) return;
+    setUploading(true);
+    try {
+      const compressed = await compressAvatarFile(file);
+      await onAvatarChange(compressed);
+      setSavedToast(true);
+      setTimeout(() => setSavedToast(false), 3500);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   return (
     <section id="about" className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        onChange={(e) => handlePhotoSelect(e.target.files?.[0])}
+      />
+
       <SectionHeading
         eyebrow="Who I Am"
         title={settings.aboutTitle || "About Me"}
@@ -27,27 +92,41 @@ export function About({ settings, marqueeItems }: { settings: SiteSettings; marq
       />
 
       <div className="mt-16 grid items-center gap-14 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-20">
-        {/* Avatar with rotating conic ring + orbit dots */}
+        {/* Avatar with rotating conic ring + orbit dots + 1-click upload */}
         <Reveal x={-40} y={0} className="mx-auto">
           <div className="relative mx-auto h-64 w-64 sm:h-72 sm:w-72">
             <div aria-hidden className="gradient-border animate-pulse-ring absolute -inset-3 rounded-[2rem]" />
             <div className="relative h-full w-full overflow-hidden rounded-[1.75rem] border border-white/10 bg-gradient-to-br from-[#171225] to-[#0f0b18]">
-              {settings.avatarUrl ? (
-                <img
-                  src={settings.avatarUrl}
-                  alt={settings.ownerName}
-                  className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
-                  onError={(e) => ((e.target as HTMLImageElement).style.display = "none")}
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-grid">
-                  <span className="text-gradient font-display text-7xl font-bold sm:text-8xl">{initials}</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={displayAvatar}
+                alt={settings.ownerName}
+                referrerPolicy="no-referrer"
+                className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+              />
+
+              {onAvatarChange && (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading}
+                  data-cursor
+                  className="glass-strong absolute left-3 top-3 z-20 inline-flex items-center gap-1.5 rounded-xl border border-white/15 px-3 py-1.5 text-xs font-medium text-white shadow-lg transition-all hover:bg-[var(--site-primary)] cursor-pointer"
+                >
+                  <Camera className="h-3.5 w-3.5" />
+                  {uploading ? "Uploading..." : "ছবি পরিবর্তন করুন"}
+                </button>
+              )}
+
+              {savedToast && (
+                <div className="absolute bottom-3 left-3 z-20 inline-flex items-center gap-1 rounded-xl bg-emerald-500/95 px-2.5 py-1 text-[11px] font-medium text-white">
+                  <CheckCircle2 className="h-3 w-3" /> সেভ হয়েছে!
                 </div>
               )}
             </div>
 
             {/* orbiting dots */}
-            <div aria-hidden className="animate-spin-slow absolute -inset-8">
+            <div aria-hidden className="animate-spin-slow pointer-events-none absolute -inset-8">
               <span className="absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 rounded-full bg-[var(--site-primary)] shadow-[0_0_16px_var(--site-primary)]" />
               <span className="absolute right-0 top-1/2 h-2 w-2 -translate-y-1/2 rounded-full bg-[var(--site-accent)] shadow-[0_0_12px_var(--site-accent)]" />
               <span className="absolute bottom-0 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rounded-full bg-amber-400 shadow-[0_0_12px_#fbbf24]" />

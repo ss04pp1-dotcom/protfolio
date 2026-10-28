@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" fill="none">
+  <defs>
+    <radialGradient id="bgGlow" cx="50%" cy="38%" r="65%">
+      <stop offset="0%" stop-color="#4c1d95" stop-opacity="0.55"/>
+      <stop offset="55%" stop-color="#1e1b4b" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#09070f" stop-opacity="1"/>
+    </radialGradient>
+    <linearGradient id="rimLight" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a855f7"/>
+      <stop offset="50%" stop-color="#ec4899"/>
+      <stop offset="100%" stop-color="#6366f1"/>
+    </linearGradient>
+    <linearGradient id="suitGrad" x1="20%" y1="0%" x2="80%" y2="100%">
+      <stop offset="0%" stop-color="#1e1b2e"/>
+      <stop offset="100%" stop-color="#0d0b16"/>
+    </linearGradient>
+    <linearGradient id="skinGrad" x1="30%" y1="10%" x2="70%" y2="90%">
+      <stop offset="0%" stop-color="#d69e72"/>
+      <stop offset="100%" stop-color="#a87048"/>
+    </linearGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+    </pattern>
+  </defs>
+
+  <!-- Studio Backdrop -->
+  <rect width="800" height="800" fill="#09070f"/>
+  <rect width="800" height="800" fill="url(#bgGlow)"/>
+  <rect width="800" height="800" fill="url(#grid)"/>
+
+  <!-- Ambient Halo Ring -->
+  <circle cx="400" cy="360" r="240" stroke="url(#rimLight)" stroke-opacity="0.22" stroke-width="2" stroke-dasharray="8 8"/>
+  <circle cx="400" cy="360" r="200" stroke="url(#rimLight)" stroke-opacity="0.15" stroke-width="1.5"/>
+
+  <!-- Shoulders & Smart-Casual Blazer -->
+  <path d="M150 800 C155 615 250 535 400 535 C550 535 645 615 650 800 Z" fill="url(#suitGrad)" stroke="url(#rimLight)" stroke-width="2.5" stroke-opacity="0.5"/>
+  <!-- Inner Crew Neck Tee -->
+  <path d="M330 545 Q400 610 470 545 L445 800 L355 800 Z" fill="#141122"/>
+  <!-- Lapel Lines -->
+  <path d="M315 548 L365 720" stroke="rgba(255,255,255,0.12)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M485 548 L435 720" stroke="rgba(255,255,255,0.12)" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- Neck -->
+  <rect x="362" y="450" width="76" height="105" rx="34" fill="url(#skinGrad)"/>
+  <path d="M362 490 Q400 525 438 490" fill="none" stroke="rgba(0,0,0,0.22)" stroke-width="8"/>
+
+  <!-- Ears -->
+  <ellipse cx="292" cy="355" rx="18" ry="34" fill="#b97f56"/>
+  <ellipse cx="508" cy="355" rx="18" ry="34" fill="#b97f56"/>
+
+  <!-- Head -->
+  <rect x="298" y="210" width="204" height="268" rx="98" fill="url(#skinGrad)" stroke="url(#rimLight)" stroke-width="2" stroke-opacity="0.35"/>
+
+  <!-- Styled Dark Hair -->
+  <path d="M294 315 C285 215 335 168 405 168 C478 168 518 215 506 315 C500 265 472 232 400 232 C328 232 302 265 294 315 Z" fill="#120f1d"/>
+  <path d="M315 205 Q405 155 488 212" stroke="url(#rimLight)" stroke-width="3" stroke-opacity="0.5" fill="none" stroke-linecap="round"/>
+
+  <!-- Eyebrows -->
+  <path d="M335 312 Q360 302 382 310" stroke="#181326" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <path d="M418 310 Q440 302 465 312" stroke="#181326" stroke-width="6" stroke-linecap="round" fill="none"/>
+
+  <!-- Eyes -->
+  <circle cx="358" cy="336" r="9" fill="#120f1d"/>
+  <circle cx="361" cy="333" r="3" fill="#ffffff"/>
+  <circle cx="442" cy="336" r="9" fill="#120f1d"/>
+  <circle cx="445" cy="333" r="3" fill="#ffffff"/>
+
+  <!-- Modern Glasses Frame -->
+  <rect x="324" y="316" width="66" height="42" rx="10" stroke="#e2e8f0" stroke-opacity="0.75" stroke-width="3" fill="rgba(139,92,246,0.06)"/>
+  <rect x="410" y="316" width="66" height="42" rx="10" stroke="#e2e8f0" stroke-opacity="0.75" stroke-width="3" fill="rgba(139,92,246,0.06)"/>
+  <path d="M390 334 L410 334" stroke="#e2e8f0" stroke-opacity="0.75" stroke-width="3"/>
+
+  <!-- Nose -->
+  <path d="M400 338 L394 382 L408 386" stroke="#8f5b38" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- Light Beard / Jaw Shading & Confident Smile -->
+  <path d="M304 375 C308 450 350 478 400 478 C450 478 492 450 496 375 C490 422 455 456 400 456 C345 456 310 422 304 375 Z" fill="#181326" fill-opacity="0.28"/>
+  <path d="M372 414 Q400 434 428 414" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none"/>
+</svg>

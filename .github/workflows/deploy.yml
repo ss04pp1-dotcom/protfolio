@@ -61,7 +61,8 @@ jobs:
             echo "First deploy — seeding demo content + admin account…"
             bunx wrangler d1 execute portfolio-db --remote --file=sql/seed.sql -y
           else
-            echo "Database already seeded — skipping (your admin edits are safe)."
+            echo "Database already seeded — ensuring default avatar if empty..."
+            bunx wrangler d1 execute portfolio-db --remote --command "UPDATE site_setting SET avatarUrl = '/images/avatar.svg' WHERE id = 'main' AND (avatarUrl IS NULL OR avatarUrl = '');" -y || true
           fi
 
       - name: Create Pages project (if needed)

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useMotionValueEvent, useScroll } from "framer-motion";
-import { Menu, X, ShieldCheck, Sparkles } from "lucide-react";
+import { Menu, X, ShieldCheck, Sparkles, Terminal } from "lucide-react";
 import { Magnetic } from "./magnetic";
 
 export const NAV_SECTIONS = [
@@ -18,10 +18,14 @@ export const NAV_SECTIONS = [
 
 export function Navbar({
   ownerName,
+  avatarUrl,
   onAdminClick,
+  onOpenAudit,
 }: {
   ownerName: string;
+  avatarUrl?: string;
   onAdminClick: () => void;
+  onOpenAudit?: () => void;
 }) {
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
@@ -60,12 +64,7 @@ export function Navbar({
     };
   }, [menuOpen]);
 
-  const initials = ownerName
-    .split(" ")
-    .map((p) => p[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
+  const displayAvatar = avatarUrl || "/images/avatar.svg";
 
   return (
     <>
@@ -77,25 +76,33 @@ export function Navbar({
           scrolled ? "glass-strong shadow-[0_8px_40px_rgba(0,0,0,0.35)]" : "bg-transparent"
         }`}
       >
-        <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
-          {/* Logo */}
-          <a href="#home" className="group flex items-center gap-2.5" data-cursor>
-            <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--site-primary)] to-[var(--site-accent)] font-display text-sm font-bold text-white shadow-[0_0_24px_rgba(139,92,246,0.45)] transition-transform duration-300 group-hover:rotate-[-8deg] group-hover:scale-110">
-              {initials || "AR"}
-              <span className="absolute inset-0 rounded-xl bg-gradient-to-br from-[var(--site-primary)] to-[var(--site-accent)] opacity-40 blur-md transition-opacity group-hover:opacity-70" />
+        <nav
+          className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
+          aria-label="Main navigation"
+        >
+          {/* Zone 1: Brand Wordmark + Owner Mini Portrait */}
+          <a href="#home" className="group flex items-center gap-2.5 shrink-0 whitespace-nowrap" data-cursor>
+            <span className="relative flex h-9 w-9 overflow-hidden items-center justify-center rounded-xl border border-[var(--site-primary)]/50 bg-[#171225] shadow-[0_0_24px_rgba(139,92,246,0.45)] transition-transform duration-300 group-hover:rotate-[-6deg] group-hover:scale-105">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={displayAvatar}
+                alt={ownerName}
+                referrerPolicy="no-referrer"
+                className="h-full w-full object-cover"
+              />
             </span>
             <span className="font-display text-lg font-semibold tracking-tight text-white">
               {ownerName.split(" ")[0] || "Portfolio"}
             </span>
           </a>
 
-          {/* Desktop links */}
+          {/* Zone 2: Desktop links */}
           <ul className="hidden items-center gap-1 lg:flex">
             {NAV_SECTIONS.map(({ id, label }) => (
               <li key={id}>
                 <a
                   href={`#${id}`}
-                  className={`relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-200 ${
+                  className={`relative rounded-full px-3.5 py-2 text-sm font-medium transition-colors duration-200 whitespace-nowrap shrink-0 ${
                     active === id ? "text-white" : "text-white/55 hover:text-white"
                   }`}
                 >
@@ -107,23 +114,32 @@ export function Navbar({
                     />
                   )}
                   <span className="relative z-10">{label}</span>
-                  <span
-                    className={`absolute inset-x-3 -bottom-0.5 h-[2px] rounded-full bg-gradient-to-r from-[var(--site-primary)] to-[var(--site-accent)] transition-all duration-300 ${
-                      active === id ? "opacity-0" : "scale-x-0 opacity-0 group-hover:scale-x-100 group-hover:opacity-60"
-                    }`}
-                  />
                 </a>
               </li>
             ))}
           </ul>
 
-          <div className="flex items-center gap-2">
-            {/* Admin button */}
+          {/* Zone 3: Actions */}
+          <div className="flex items-center gap-2 shrink-0">
+            {onOpenAudit && (
+              <Magnetic strength={0.2}>
+                <button
+                  type="button"
+                  onClick={onOpenAudit}
+                  data-cursor
+                  className="hidden items-center gap-1.5 rounded-full border border-[var(--site-primary)]/40 bg-[var(--site-primary)]/10 px-3.5 py-2 font-mono text-xs text-white/90 transition-all hover:bg-[var(--site-primary)]/20 sm:flex whitespace-nowrap shrink-0 cursor-pointer"
+                >
+                  <Terminal className="h-3.5 w-3.5 text-[var(--site-accent)]" />
+                  A–Z Audit
+                </button>
+              </Magnetic>
+            )}
+
             <Magnetic strength={0.25}>
               <button
                 onClick={onAdminClick}
                 data-cursor
-                className="group hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-medium text-white/75 transition-all duration-300 hover:border-[var(--site-primary)]/50 hover:bg-white/[0.08] hover:text-white hover:shadow-[0_0_24px_rgba(139,92,246,0.3)] sm:flex"
+                className="group hidden items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-sm font-medium text-white/75 transition-all duration-300 hover:border-[var(--site-primary)]/50 hover:bg-white/[0.08] hover:text-white hover:shadow-[0_0_24px_rgba(139,92,246,0.3)] sm:flex whitespace-nowrap shrink-0 cursor-pointer"
               >
                 <ShieldCheck className="h-4 w-4 transition-transform duration-300 group-hover:rotate-12 group-hover:text-[var(--site-accent)]" />
                 Admin
@@ -188,8 +204,20 @@ export function Navbar({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
                 transition={{ delay: 0.05 + NAV_SECTIONS.length * 0.055, duration: 0.45 }}
-                className="mt-8"
+                className="mt-8 flex flex-wrap justify-center gap-3"
               >
+                {onOpenAudit && (
+                  <button
+                    onClick={() => {
+                      setMenuOpen(false);
+                      onOpenAudit();
+                    }}
+                    className="flex items-center gap-2 rounded-full border border-[var(--site-accent)]/40 bg-[var(--site-accent)]/10 px-6 py-3 font-mono text-xs text-white"
+                  >
+                    <Terminal className="h-4 w-4" />
+                    A–Z Audit Report
+                  </button>
+                )}
                 <button
                   onClick={() => {
                     setMenuOpen(false);

@@ -2,181 +2,157 @@
 
 import { useEffect, useRef } from "react";
 
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  r: number;
+  alpha: number;
+  hue: number;
+}
+
 /**
- * ParticleField — canvas "constellation" background: drifting particles
- * connected by lines, gently repelled by the cursor. Fixed, zero-JSX
- * cost, and pauses when the tab is hidden.
+ * Optimized 60fps ParticleField — respects prefers-reduced-motion, pauses when
+ * tab is hidden, avoids per-frame shadowBlur, and uses squared distance checks.
  */
 export function ParticleField() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const ref = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
+    const canvas = ref.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const context = canvas.getContext("2d", { alpha: true });
+    if (!context) return;
+    const ctx: CanvasRenderingContext2D = context;
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduced) return;
 
-    let raf = 0;
     let w = 0;
     let h = 0;
     let dpr = 1;
+    let particles: Particle[] = [];
+    let raf = 0;
+    let isVisible = true;
     const mouse = { x: -9999, y: -9999 };
-
-    interface P {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      r: number;
-      hue: number;
-    }
-    let particles: P[] = [];
-
-    function readColors() {
-      const cs = getComputedStyle(document.documentElement);
-      const primary = cs.getPropertyValue("--site-primary").trim() || "#8b5cf6";
-      const accent = cs.getPropertyValue("--site-accent").trim() || "#d946ef";
-      return { primary, accent };
-    }
-    let colors = readColors();
-    let colorTimer = 0;
-
-    function hexToRgb(hex: string): [number, number, number] {
-      const m = /^#?([\da-f]{2})([\da-f]{2})([\da-f]{2})$/i.exec(hex);
-      if (!m) return [139, 92, 246];
-      return [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)];
-    }
 
     function resize() {
       if (!canvas) return;
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = canvas.clientWidth;
-      h = canvas.clientHeight;
-      canvas.width = w * dpr;
-      canvas.height = h * dpr;
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      w = window.innerWidth;
+      h = window.innerHeight;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      canvas.style.width = `${w}px`;
+      canvas.style.height = `${h}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       const density = Math.min(w * h, 1600 * 900);
-      const count = reduced ? 0 : Math.max(28, Math.min(90, Math.floor(density / 22000)));
+      const count = Math.max(20, Math.min(48, Math.floor(density / 32000)));
       particles = Array.from({ length: count }, () => ({
         x: Math.random() * w,
         y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.28,
-        vy: (Math.random() - 0.5) * 0.28,
-        r: Math.random() * 1.7 + 0.7,
-        hue: Math.random(),
+        vx: (Math.random() - 0.5) * 0.32,
+        vy: (Math.random() - 0.5) * 0.32,
+        r: Math.random() * 1.6 + 0.6,
+        alpha: Math.random() * 0.45 + 0.15,
+        hue: Math.random() > 0.5 ? 268 : 302,
       }));
     }
 
-    function step() {
-      if (document.hidden) {
-        raf = requestAnimationFrame(step);
-        return;
-      }
-      // pick up admin theme color changes cheaply
-      if (++colorTimer > 240) {
-        colorTimer = 0;
-        colors = readColors();
-      }
+    const LINK_DIST_SQ = 128 * 128;
+    const MOUSE_DIST_SQ = 140 * 140;
 
-      const [pr, pg, pb] = hexToRgb(colors.primary);
-      const [ar, ag, ab] = hexToRgb(colors.accent);
+    function tick() {
+      if (!isVisible) return;
       ctx.clearRect(0, 0, w, h);
 
-      const LINK = 120;
-
-      for (const p of particles) {
-        // gentle cursor repulsion
-        const dxm = p.x - mouse.x;
-        const dym = p.y - mouse.y;
-        const dm = Math.hypot(dxm, dym);
-        if (dm < 130 && dm > 0.01) {
-          const f = ((130 - dm) / 130) * 0.045;
-          p.vx += (dxm / dm) * f;
-          p.vy += (dym / dm) * f;
-        }
-
+      const len = particles.length;
+      for (let i = 0; i < len; i++) {
+        const p = particles[i];
         p.x += p.vx;
         p.y += p.vy;
-        // dampen
-        p.vx *= 0.985;
-        p.vy *= 0.985;
-        // keep minimum drift
-        if (Math.abs(p.vx) < 0.06) p.vx += (Math.random() - 0.5) * 0.02;
-        if (Math.abs(p.vy) < 0.06) p.vy += (Math.random() - 0.5) * 0.02;
+        if (p.x < 0) p.x = w;
+        else if (p.x > w) p.x = 0;
+        if (p.y < 0) p.y = h;
+        else if (p.y > h) p.y = 0;
 
-        if (p.x < -20) p.x = w + 20;
-        if (p.x > w + 20) p.x = -20;
-        if (p.y < -20) p.y = h + 20;
-        if (p.y > h + 20) p.y = -20;
-      }
+        const dx = p.x - mouse.x;
+        const dy = p.y - mouse.y;
+        const dSq = dx * dx + dy * dy;
+        if (dSq < MOUSE_DIST_SQ && dSq > 1) {
+          const d = Math.sqrt(dSq);
+          const f = (140 - d) / 140;
+          p.x += (dx / d) * f * 1.4;
+          p.y += (dy / d) * f * 1.4;
+        }
 
-      // links
-      for (let i = 0; i < particles.length; i++) {
-        const a = particles[i];
-        for (let j = i + 1; j < particles.length; j++) {
-          const b = particles[j];
-          const dx = a.x - b.x;
-          const dy = a.y - b.y;
-          const d = Math.hypot(dx, dy);
-          if (d < LINK) {
-            const alpha = (1 - d / LINK) * 0.22;
-            const c = a.hue > 0.5 ? [pr, pg, pb] : [ar, ag, ab];
-            ctx.strokeStyle = `rgba(${c[0]},${c[1]},${c[2]},${alpha})`;
-            ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue}, 90%, 72%, ${p.alpha})`;
+        ctx.fill();
+
+        for (let j = i + 1; j < len; j++) {
+          const q = particles[j];
+          const lx = p.x - q.x;
+          const ly = p.y - q.y;
+          const distSq = lx * lx + ly * ly;
+          if (distSq < LINK_DIST_SQ) {
+            const a = (1 - distSq / LINK_DIST_SQ) * 0.13;
+            ctx.strokeStyle = `hsla(280, 85%, 70%, ${a})`;
+            ctx.lineWidth = 0.6;
             ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
+            ctx.moveTo(p.x, p.y);
+            ctx.lineTo(q.x, q.y);
             ctx.stroke();
           }
         }
       }
 
-      // dots with glow
-      for (const p of particles) {
-        const c = p.hue > 0.5 ? [pr, pg, pb] : [ar, ag, ab];
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(${c[0]},${c[1]},${c[2]},0.75)`;
-        ctx.shadowColor = `rgba(${c[0]},${c[1]},${c[2]},0.8)`;
-        ctx.shadowBlur = 6;
-        ctx.fill();
-        ctx.shadowBlur = 0;
-      }
-
-      raf = requestAnimationFrame(step);
+      raf = requestAnimationFrame(tick);
     }
 
-    const onMouse = (e: MouseEvent) => {
+    function onMove(e: MouseEvent) {
       mouse.x = e.clientX;
       mouse.y = e.clientY;
-    };
-    const onLeave = () => {
+    }
+    function onLeave() {
       mouse.x = -9999;
       mouse.y = -9999;
-    };
+    }
+    function onVisibility() {
+      const next = document.visibilityState === "visible";
+      if (next && !isVisible) {
+        isVisible = true;
+        raf = requestAnimationFrame(tick);
+      } else if (!next) {
+        isVisible = false;
+        cancelAnimationFrame(raf);
+      }
+    }
 
     resize();
-    window.addEventListener("resize", resize);
-    window.addEventListener("mousemove", onMouse, { passive: true });
-    document.addEventListener("mouseleave", onLeave);
-    raf = requestAnimationFrame(step);
+    raf = requestAnimationFrame(tick);
+    window.addEventListener("resize", resize, { passive: true });
+    window.addEventListener("mousemove", onMove, { passive: true });
+    window.addEventListener("mouseleave", onLeave);
+    document.addEventListener("visibilitychange", onVisibility);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", onMouse);
-      document.removeEventListener("mouseleave", onLeave);
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseleave", onLeave);
+      document.removeEventListener("visibilitychange", onVisibility);
     };
   }, []);
 
   return (
     <canvas
-      ref={canvasRef}
+      ref={ref}
       aria-hidden
-      className="pointer-events-none fixed inset-0 z-0 h-full w-full opacity-70"
+      className="pointer-events-none fixed inset-0 z-0 opacity-75"
     />
   );
 }

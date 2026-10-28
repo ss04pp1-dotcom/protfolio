@@ -82,7 +82,9 @@ export function sanitize(
     } else if (type === "boolean") {
       out[key] = raw === true || raw === "true" || raw === 1 ? 1 : 0;
     } else {
-      out[key] = raw == null ? "" : String(raw).slice(0, 20000);
+      // Allow up to 600KB for data-URI images (imageUrl / avatarUrl), 20KB for text fields
+      const maxLen = key === "imageUrl" || key === "avatarUrl" ? 600000 : 20000;
+      out[key] = raw == null ? "" : String(raw).slice(0, maxLen);
     }
   }
   return out;
@@ -218,7 +220,11 @@ export const EDITABLE_SETTINGS = [
 export async function getSettings(
   sql: SqlClient
 ): Promise<Record<string, unknown> | null> {
-  return sql.prepare(`SELECT * FROM "site_setting" WHERE "id" = 'main'`).first();
+  const row = await sql.prepare(`SELECT * FROM "site_setting" WHERE "id" = 'main'`).first<Record<string, unknown>>();
+  if (row && (!row.avatarUrl || String(row.avatarUrl).trim() === "")) {
+    row.avatarUrl = "/images/avatar.svg";
+  }
+  return row;
 }
 
 export async function putSettings(
@@ -228,7 +234,9 @@ export async function putSettings(
   const data: Record<string, string> = {};
   for (const key of EDITABLE_SETTINGS) {
     if (key in body) {
-      data[key] = String(body[key] ?? "").slice(0, 5000);
+      // Allow up to 600KB for base64 WebP avatarUrl, 5KB for regular text settings
+      const maxLen = key === "avatarUrl" ? 600000 : 5000;
+      data[key] = String(body[key] ?? "").slice(0, maxLen);
     }
   }
   for (const ck of ["primaryColor", "accentColor"] as const) {
@@ -256,6 +264,12 @@ export async function putSettings(
 /* Public composite site data                                          */
 /* ------------------------------------------------------------------ */
 
+const DEFAULT_PROJECT_IMAGES = [
+  "/images/project-nova.svg",
+  "/images/project-lumen.svg",
+  "/images/project-pulse.svg",
+];
+
 export async function getSiteData(sql: SqlClient) {
   const [settings, skills, projects, experiences, education, services, testimonials, socialLinks, stats] =
     await Promise.all([
@@ -270,7 +284,25 @@ export async function getSiteData(sql: SqlClient) {
       listEntity(sql, ENTITIES.stats),
     ]);
 
-  return { settings, skills, projects, experiences, education, services, testimonials, socialLinks, stats };
+  const enrichedProjects = projects.map((p, idx) => ({
+    ...p,
+    imageUrl:
+      p.imageUrl && String(p.imageUrl).trim() !== ""
+        ? p.imageUrl
+        : DEFAULT_PROJECT_IMAGES[idx % DEFAULT_PROJECT_IMAGES.length],
+  }));
+
+  return {
+    settings,
+    skills,
+    projects: enrichedProjects,
+    experiences,
+    education,
+    services,
+    testimonials,
+    socialLinks,
+    stats,
+  };
 }
 
 /* ------------------------------------------------------------------ */

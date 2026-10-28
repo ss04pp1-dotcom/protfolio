@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" fill="none">
+  <defs>
+    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0d0b18"/>
+      <stop offset="100%" stop-color="#191129"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="50%" stop-color="#ec4899"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="640" fill="url(#bg2)"/>
+  <!-- 3D Wireframe Grid & Sculptural Lamp Showcase -->
+  <ellipse cx="480" cy="490" rx="290" ry="70" stroke="url(#gold)" stroke-opacity="0.35" stroke-width="2" stroke-dasharray="6 6"/>
+  <ellipse cx="480" cy="490" rx="190" ry="44" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+  <path d="M350 490 L480 150 L610 490" stroke="url(#gold)" stroke-opacity="0.45" stroke-width="2"/>
+  <path d="M480 150 L480 490" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="4 4"/>
+  <!-- Sculptural Lamp Dome -->
+  <path d="M340 260 C340 160 620 160 620 260 Z" fill="#1f1933" stroke="url(#gold)" stroke-width="3"/>
+  <rect x="468" y="260" width="24" height="210" rx="8" fill="url(#gold)"/>
+  <rect x="390" y="466" width="180" height="28" rx="14" fill="#231c38" stroke="url(#gold)" stroke-width="2"/>
+  <text x="100" y="100" fill="#e2e8f0" font-family="monospace" font-size="14">WEBGL SHADER PIPELINE · 99 LIGHTHOUSE</text>
+</svg>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 640" fill="none">
+  <rect width="960" height="640" fill="#0b0914"/>
+  <rect x="80" y="70" width="800" height="500" rx="24" fill="#141024" stroke="rgba(139,92,246,0.3)" stroke-width="2"/>
+  <rect x="80" y="70" width="220" height="500" rx="24" fill="#19142e"/>
+  <!-- Channels -->
+  <rect x="108" y="120" width="164" height="32" rx="8" fill="rgba(139,92,246,0.2)"/>
+  <rect x="108" y="168" width="140" height="28" rx="8" fill="rgba(255,255,255,0.05)"/>
+  <rect x="108" y="212" width="152" height="28" rx="8" fill="rgba(255,255,255,0.05)"/>
+  <!-- Message Bubbles & Audio Waveform -->
+  <rect x="340" y="130" width="380" height="76" rx="18" fill="#1f1936" stroke="rgba(255,255,255,0.08)"/>
+  <text x="368" y="164" fill="#c4b5fd" font-family="sans-serif" font-weight="bold" font-size="15">Nadia Chen · CTO</text>
+  <text x="368" y="188" fill="#cbd5e1" font-family="sans-serif" font-size="14">WebSocket cluster synced — 10,400 active peers</text>
+  <rect x="440" y="236" width="390" height="86" rx="18" fill="rgba(139,92,246,0.22)" stroke="rgba(217,70,239,0.4)"/>
+  <!-- Waveform bars -->
+  <g fill="#e879f9">
+    <rect x="475" y="268" width="6" height="24" rx="3"/>
+    <rect x="491" y="256" width="6" height="48" rx="3"/>
+    <rect x="507" y="262" width="6" height="36" rx="3"/>
+    <rect x="523" y="250" width="6" height="60" rx="3"/>
+    <rect x="539" y="264" width="6" height="32" rx="3"/>
+    <rect x="555" y="258" width="6" height="44" rx="3"/>
+    <rect x="571" y="270" width="6" height="20" rx="3"/>
+  </g>
+  <text x="605" y="285" fill="#ffffff" font-family="monospace" font-size="14">0:42 · Voice Room</text>
+  <rect x="340" y="355" width="490" height="72" rx="18" fill="#1f1936" stroke="rgba(255,255,255,0.08)"/>
+  <text x="368" y="396" fill="#34d399" font-family="monospace" font-size="15">✓ Optimistic UI + Redis Pub/Sub active</text>
+</svg>
