@@ -28,3 +28,9 @@ db/*.db-wal
 # test screenshots & VLM debug output
 scripts/*.png
 scripts/vlm-*.json
+scripts/shots/
+scripts/visual-check*.sh
+scripts/verify_shots.py
+
+# sandbox session artifacts
+tool-results/
