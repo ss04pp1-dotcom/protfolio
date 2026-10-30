@@ -18,6 +18,8 @@ export interface SiteSettings {
   accentColor: string;
   marqueeText: string;
   footerText: string;
+  /** "true" | "false" — immersive WebGL background vs 2D particles */
+  enable3d: string;
 }
 
 export interface Skill {

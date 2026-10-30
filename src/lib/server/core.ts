@@ -215,6 +215,7 @@ export const EDITABLE_SETTINGS = [
   "accentColor",
   "marqueeText",
   "footerText",
+  "enable3d",
 ] as const;
 
 export async function getSettings(
@@ -243,6 +244,9 @@ export async function putSettings(
     if (ck in data && !/^#[0-9a-fA-F]{6}$/.test(data[ck])) {
       throw new ApiError(400, `${ck} must be a hex color like #8b5cf6`);
     }
+  }
+  if ("enable3d" in data && data.enable3d !== "true" && data.enable3d !== "false") {
+    throw new ApiError(400, `enable3d must be "true" or "false"`);
   }
 
   const now = new Date().toISOString();

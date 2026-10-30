@@ -27,6 +27,7 @@ const INITIAL_SITE_DATA: SiteData = {
     marqueeText:
       "Full-Stack Engineering, Next.js 15 SSR, UI/UX Architecture, High-FPS Motion, TypeScript Systems, SQLite & Edge APIs, Web Performance, Design Systems",
     footerText: "Engineered for speed & visual precision",
+    enable3d: "true",
   },
   skills: [
     { id: "sk_1", name: "React & Next.js", category: "Frontend", level: 96, icon: "Code2", order: 1 },

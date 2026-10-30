@@ -50,7 +50,19 @@ jobs:
           sed -i "s/__D1_DATABASE_ID__/$DB_ID/" wrangler.toml
 
       - name: Apply database schema
-        run: bunx wrangler d1 execute portfolio-db --remote --file=sql/0000_init.sql -y
+        run: |
+          bunx wrangler d1 execute portfolio-db --remote --file=sql/0000_init.sql -y
+          # migration 0001 (enable3d) — ALTER TABLE is not idempotent in SQLite,
+          # so apply it only when the column is missing.
+          HAS_COL=$(bunx wrangler d1 execute portfolio-db --remote --json \
+            --command "SELECT COUNT(*) AS c FROM pragma_table_info('site_setting') WHERE name = 'enable3d'" \
+            | jq -r '(if type == "array" then .[0] else .result[0] end) | (.results // [])[0].c // 0')
+          if [ "$HAS_COL" = "0" ]; then
+            echo "→ applying migration 0001 (enable3d)"
+            bunx wrangler d1 execute portfolio-db --remote --file=sql/0001_3d_toggle.sql -y
+          else
+            echo "→ migration 0001 already applied"
+          fi
 
       - name: Seed database (first deploy only)
         run: |

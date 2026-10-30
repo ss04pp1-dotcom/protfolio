@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Save, Loader2, Palette, Sparkles, User, Contact, FileText, Sparkle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -227,6 +228,21 @@ export function SettingsManager({
         </TabsContent>
 
         <TabsContent value="extras" className="mt-6 space-y-5">
+          <Field label="3D Background" hint="Immersive WebGL scene — liquid-metal core, orbit rings, starfield & floating shapes that fly past as visitors scroll. Off = lightweight 2D particles.">
+            <div className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3.5">
+              <Switch
+                checked={form.enable3d !== "false"}
+                onCheckedChange={(v) => set("enable3d", v ? "true" : "false")}
+                aria-label="Toggle 3D background"
+              />
+              <div className="text-sm">
+                <span className={form.enable3d !== "false" ? "font-medium text-white" : "font-medium text-white/70"}>
+                  {form.enable3d !== "false" ? "Full 3D experience" : "2D particles"}
+                </span>
+                <p className="mt-0.5 text-xs text-white/35">Follows your theme colors automatically.</p>
+              </div>
+            </div>
+          </Field>
           <Field label="Marquee Text" hint="Comma separated words for the scrolling strip under About">
             <Textarea rows={2} value={form.marqueeText} onChange={(e) => set("marqueeText", e.target.value)} className={inputCls} />
           </Field>

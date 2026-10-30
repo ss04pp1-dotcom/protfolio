@@ -16,11 +16,13 @@ if (existsSync(DB_PATH)) {
 }
 
 const initSql = await Bun.file("sql/0000_init.sql").text();
+const migrateSql = await Bun.file("sql/0001_3d_toggle.sql").text();
 const seedSql = await Bun.file("sql/seed.sql").text();
 
 const db = new Database(DB_PATH);
 db.exec("PRAGMA journal_mode = WAL;");
 db.exec(initSql);
+db.exec(migrateSql); // 0001: enable3d column
 db.exec(seedSql);
 
 // sanity check

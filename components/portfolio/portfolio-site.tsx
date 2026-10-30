@@ -28,7 +28,7 @@ export function PortfolioSite({
   const marqueeItems = settings.marqueeText.split(",").map((m) => m.trim()).filter(Boolean);
 
   return (
-    <div className="relative flex min-h-screen flex-col">
+    <div className="relative flex min-h-screen flex-col overflow-x-clip">
       <Navbar
         ownerName={settings.ownerName}
         avatarUrl={settings.avatarUrl}
